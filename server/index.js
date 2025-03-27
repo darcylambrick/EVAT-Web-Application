@@ -1,5 +1,7 @@
 //get all system environment variables
 require('dotenv').config()
+const fs = require('fs');
+const { marked } = require('marked');
 const path = require("path");
 const express = require("express");
 const app = express();
@@ -24,6 +26,12 @@ app.use('/api/navigation', NavRoutes);
 
 
 app.use(express.static('./build'));
+
+app.use('/help', function(req, res) {
+    var readme = 'SERVER_API.md';
+  var output = fs.readFileSync(readme, 'utf8');
+  res.send(marked(output.toString()));
+  });
 
 app.get('*', (req, res) => {
     //uncomment this if you have static files to server
