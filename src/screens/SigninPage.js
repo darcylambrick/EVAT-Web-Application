@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { ConfigData } from '../data/config';
 import {
   View,
   Text,
@@ -9,13 +10,17 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+const config = ConfigData();
+const url = `http://${config.backend.ipAddress}:${config.backend.port}/api/auth/login`
+
 const SigninPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleEmailSignin = async () => {
     try {
-      const response = await fetch('http://localhost:8001/api/auth/signin', {
+      // const response = await fetch('http://localhost:8001/api/auth/signin', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

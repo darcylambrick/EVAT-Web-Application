@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { ConfigData } from '../data/config';
 import {
   View,
   Text,
@@ -10,26 +11,30 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+const config = ConfigData();
+const url = `http://${config.backend.ipAddress}:${config.backend.port}/api/auth/register`
+
 const SignupPage = ({navigation}) => {
-  const [name, setName] = useState('');
-  const [country, setCountry] = useState('');
-  const [phone, setPhone] = useState('');
+  const [fullName, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   const handleEmailSignup = async () => {
     try {
-      const response = await fetch('http://localhost:8001/api/auth/signup', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({name, country, phone, isSubscribed}),
+        body: JSON.stringify({fullName, password, email}),
       });
 
       const data = await response.json();
       if (response.ok) {
         // Handle successful sign-up
         console.log('Sign-up successful', data);
+        navigation.navigate('SignIn')
       } else {
         // Handle sign-up error
         console.log('Sign-up failed', data.message);
@@ -52,8 +57,8 @@ const SignupPage = ({navigation}) => {
   };
 
   const clearName = () => setName('');
-  const clearCountry = () => setCountry('');
-  const clearPhone = () => setPhone('');
+  const clearEmail = () => setEmail('');
+  const clearPassword = () => setPassword('');
 
   return (
     <View style={styles.container}>
@@ -64,10 +69,10 @@ const SignupPage = ({navigation}) => {
         <TextInput
           style={styles.input}
           placeholder="Name"
-          value={name}
+          value={fullName}
           onChangeText={setName}
         />
-        {name !== '' && (
+        {fullName !== '' && (
           <TouchableOpacity onPress={clearName} style={styles.clearButton}>
             <Text style={styles.clearButtonText}>×</Text>
           </TouchableOpacity>
@@ -77,12 +82,12 @@ const SignupPage = ({navigation}) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Country"
-          value={country}
-          onChangeText={setCountry}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
         />
-        {country !== '' && (
-          <TouchableOpacity onPress={clearCountry} style={styles.clearButton}>
+        {email !== '' && (
+          <TouchableOpacity onPress={clearEmail} style={styles.clearButton}>
             <Text style={styles.clearButtonText}>×</Text>
           </TouchableOpacity>
         )}
@@ -91,12 +96,12 @@ const SignupPage = ({navigation}) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Phone"
-          value={phone}
-          onChangeText={setPhone}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
         />
-        {phone !== '' && (
-          <TouchableOpacity onPress={clearPhone} style={styles.clearButton}>
+        {password !== '' && (
+          <TouchableOpacity onPress={clearPassword} style={styles.clearButton}>
             <Text style={styles.clearButtonText}>×</Text>
           </TouchableOpacity>
         )}
