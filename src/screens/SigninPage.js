@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 8,
+    color: "black"
   },
   clearButton: {
     borderWidth: 1,
