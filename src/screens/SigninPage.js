@@ -32,6 +32,7 @@ const SigninPage = ({navigation}) => {
       if (response.ok) {
         // Handle successful sign-in, e.g., navigate to another screen or store user token
         console.log('Sign-in successful', data);
+        navigation.navigate("MapPage");
       } else {
         // Handle sign-in error, e.g., display an error message
         console.log('Sign-in failed', data.message);
@@ -86,6 +87,10 @@ const SigninPage = ({navigation}) => {
         )}
       </View>
 
+      <TouchableOpacity style={styles.emailButton} onPress={handleEmailSignin}>
+        <Text style={styles.emailButtonText}>Sign In</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.googleButton}
         onPress={handleGoogleSignin}>
@@ -96,9 +101,6 @@ const SigninPage = ({navigation}) => {
         <Text style={styles.buttonText}>Sign In with Apple</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.emailButton} onPress={handleEmailSignin}>
-        <Text style={styles.emailButtonText}>Sign In</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.signupText}>
@@ -148,6 +150,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 8,
+    color: "black"
   },
   clearButton: {
     borderWidth: 1,

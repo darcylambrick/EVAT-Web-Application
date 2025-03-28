@@ -99,6 +99,7 @@ const SignupPage = ({navigation}) => {
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
+          secureTextEntry
         />
         {password !== '' && (
           <TouchableOpacity onPress={clearPassword} style={styles.clearButton}>

@@ -1,4 +1,6 @@
 declare const navigator: any;
+import GetLocation from 'react-native-get-location'
+
 type GeolocationPosition = {
   coords: {
     latitude: number;
@@ -28,7 +30,7 @@ const MapPage = () => {
     const requestLocationPermission = async () => {
       if (Platform.OS === 'android') {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           locateUser();
@@ -38,36 +40,55 @@ const MapPage = () => {
       }
     };
 
+    // const locateUser = () => {
+    //   Geolocation.getCurrentPosition(
+    //     (position: GeolocationPosition) => {
+    //       const {latitude, longitude} = position.coords;
+    //       setRegion({
+    //         latitude,
+    //         longitude,
+    //         latitudeDelta: 0.01,
+    //         longitudeDelta: 0.01,
+    //       });
+    //     },
+    //     (error: GeolocationPositionError) => {
+    //       console.log('Geolocation error:', error.message);
+    //     },
+    //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    //   );
+    // };
+
     const locateUser = () => {
-      navigator.geolocation.getCurrentPosition(
-        (position: GeolocationPosition) => {
-          const { latitude, longitude } = position.coords;
+      GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 60000,
+      })
+        .then(location => {
+          console.log(location);
+          const {latitude, longitude} = location;
           setRegion({
             latitude,
             longitude,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           });
-        },
-        (error: GeolocationPositionError) => {
-          console.log('Geolocation error:', error.message);
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-      );
+        })
+        .catch(error => {
+          const { code, message } = error;
+          console.warn(code, message);
+        })
     };
 
     requestLocationPermission();
   }, []);
 
-  if (!region) return null;
+  if (!region) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={region}
-        showsUserLocation={true}
-      />
+      <MapView style={styles.map} region={region} showsUserLocation={true} />
     </View>
   );
 };
