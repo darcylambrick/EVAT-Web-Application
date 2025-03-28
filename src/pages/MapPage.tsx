@@ -17,9 +17,9 @@ type GeolocationPositionError = {
   message: string;
 };
 
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, PermissionsAndroid, Platform} from 'react-native';
+import MapView, {Marker, Region} from 'react-native-maps';
 
 const MapPage = () => {
   const [region, setRegion] = useState<Region | null>(null);
@@ -28,7 +28,7 @@ const MapPage = () => {
     const requestLocationPermission = async () => {
       if (Platform.OS === 'android') {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           locateUser();
@@ -41,7 +41,7 @@ const MapPage = () => {
     const locateUser = () => {
       navigator.geolocation.getCurrentPosition(
         (position: GeolocationPosition) => {
-          const { latitude, longitude } = position.coords;
+          const {latitude, longitude} = position.coords;
           setRegion({
             latitude,
             longitude,
@@ -52,22 +52,20 @@ const MapPage = () => {
         (error: GeolocationPositionError) => {
           console.log('Geolocation error:', error.message);
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
       );
     };
 
     requestLocationPermission();
   }, []);
 
-  if (!region) return null;
+  if (!region) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={region}
-        showsUserLocation={true}
-      />
+      <MapView style={styles.map} region={region} showsUserLocation={true} />
     </View>
   );
 };
