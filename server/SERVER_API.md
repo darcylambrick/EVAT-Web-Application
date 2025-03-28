@@ -43,7 +43,7 @@ Endpoints related to trip planning, route navigation, and finding EV stations.
     }
     ```
 
-#### **GET** `/navigation/ev-stations`
+#### **GET** `/navigation/ev-chargers`
 - **Description**: Find nearby EV charging stations based on location and charger type.
 - **Query Params**:
     - `lat`: Latitude of the location.
@@ -51,7 +51,7 @@ Endpoints related to trip planning, route navigation, and finding EV stations.
     - `radius`: Search radius (in km).
     - `chargerType`: Optional filter for charger type (`Type 2`, `CHAdeMO`).
 
-- **Example**: `/navigation/ev-stations?lat=34.052235&lon=-118.243683&radius=10&chargerType=fast`
+- **Example**: `http://<<address>>:<<port>>/api/navigation/ev-chargers?lat=-37.850124&lon=145.104395&radius=10&chargerType=fast`
 
 - **Response**:
 
