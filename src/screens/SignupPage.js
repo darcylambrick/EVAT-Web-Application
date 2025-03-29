@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 const config = ConfigData();
-const url = `http://${config.backend.ipAddress}:${config.backend.port}/api/auth/register`
+const url = `${config.backend.ipAddress}:${config.backend.port}/api/auth/register`
 
 const SignupPage = ({navigation}) => {
   const [fullName, setName] = useState('');
