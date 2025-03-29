@@ -1,6 +1,8 @@
 declare const navigator: any;
 import GetLocation from 'react-native-get-location'
 
+console.log(GetLocation);
+
 type GeolocationPosition = {
   coords: {
     latitude: number;
@@ -65,7 +67,7 @@ const MapPage = () => {
       })
         .then(location => {
           console.log(location);
-          const {latitude, longitude} = location;
+          const { latitude, longitude } = location;
           setRegion({
             latitude,
             longitude,
@@ -83,12 +85,23 @@ const MapPage = () => {
   }, []);
 
   if (!region) {
+    console.log("Region Null")
     return null;
   }
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} region={region} showsUserLocation={true} />
+      <MapView
+        style={styles.map}
+        region={region}
+        showsUserLocation={true} >
+        <Marker
+          key={1}
+          coordinate={region}
+          title="Test"
+          description="This is a thing"
+        />
+      </MapView>
     </View>
   );
 };

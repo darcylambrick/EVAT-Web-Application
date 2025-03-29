@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 const config = ConfigData();
-const url = `http://${config.backend.ipAddress}:${config.backend.port}/api/auth/login`
+const url = `${config.backend.ipAddress}:${config.backend.port}/api/auth/login`
 
 const SigninPage = ({navigation}) => {
   const [email, setEmail] = useState('');
