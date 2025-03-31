@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { ConfigData } from '../data/config';
 import {
   View,
@@ -14,7 +14,7 @@ import {
 const config = ConfigData();
 const url = `${config.backend.ipAddress}:${config.backend.port}/api/auth/register`
 
-const SignupPage = ({navigation}) => {
+const SignupPage = ({ navigation }) => {
   const [fullName, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +27,7 @@ const SignupPage = ({navigation}) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({fullName, password, email}),
+        body: JSON.stringify({ fullName, password, email }),
       });
 
       const data = await response.json();
@@ -116,6 +116,30 @@ const SignupPage = ({navigation}) => {
         <Switch value={isSubscribed} onValueChange={toggleSubscription} />
       </View>
 
+
+
+      {/*
+      <TouchableOpacity style={styles.appleButton} onPress={handleGoogleSignup}>
+        <Text style={styles.emailButtonText}>Sign Up with Google</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.appleButton} onPress={handleAppleSignup}>
+        <Text style={styles.emailButtonText}>Sign Up with Apple</Text>
+      </TouchableOpacity>
+      */}
+
+      <TouchableOpacity style={styles.appleButton} onPress={handleEmailSignup}>
+        <Text style={styles.emailButtonText}>Create</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.appleButton}
+        onPress={() => navigation.navigate('Signin')}>
+        <Text style={styles.emailButtonText}>
+          Already have an account? Sign In
+        </Text>
+      </TouchableOpacity>
+
       <View style={styles.legalContainer}>
         <TouchableOpacity
           onPress={() => {
@@ -131,26 +155,6 @@ const SignupPage = ({navigation}) => {
           <Text style={styles.legalText}>Terms & Conditions</Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity style={styles.appleButton} onPress={handleEmailSignup}>
-        <Text style={styles.emailButtonText}>Next</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.appleButton} onPress={handleGoogleSignup}>
-        <Text style={styles.emailButtonText}>Sign Up with Google</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.appleButton} onPress={handleAppleSignup}>
-        <Text style={styles.emailButtonText}>Sign Up with Apple</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.appleButton}
-        onPress={() => navigation.navigate('Signin')}>
-        <Text style={styles.emailButtonText}>
-          Already have an account? Sign In
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };

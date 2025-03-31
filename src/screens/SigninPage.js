@@ -19,7 +19,6 @@ const SigninPage = ({navigation}) => {
 
   const handleEmailSignin = async () => {
     try {
-      // const response = await fetch('http://localhost:8001/api/auth/signin', {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -91,6 +90,7 @@ const SigninPage = ({navigation}) => {
         <Text style={styles.emailButtonText}>Sign In</Text>
       </TouchableOpacity>
 
+      {/*
       <TouchableOpacity
         style={styles.googleButton}
         onPress={handleGoogleSignin}>
@@ -101,18 +101,20 @@ const SigninPage = ({navigation}) => {
         <Text style={styles.buttonText}>Sign In with Apple</Text>
       </TouchableOpacity>
 
-
+      */}
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.signupText}>
           Don't you have an account? Go to Sign Up
         </Text>
       </TouchableOpacity>
 
+      {/*
       <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')}>
         <Text style={styles.signupText}>
           Forgot password? Click here to reset.
         </Text>
       </TouchableOpacity>
+      */}
     </View>
   );
 };
