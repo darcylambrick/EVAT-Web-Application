@@ -21,9 +21,22 @@ type GeolocationPositionError = {
   message: string;
 };
 
+//dummy data
+const chargerOptions = {
+  charger: {
+    title: "Charger 1",
+    location: {
+      latitude: -22.22222,
+      longitude: 111.11111
+    },
+    details: "This is a dummy charger"
+  }
+}
+
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
+import { Text, View, StyleSheet, PermissionsAndroid, Platform, Modal, Dimensions } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
+import { ChargerInfo } from "../components/ChargerInfo"
 
 const MapPage = () => {
   const [region, setRegion] = useState<Region | null>(null);
@@ -42,23 +55,31 @@ const MapPage = () => {
       }
     };
 
-    // const locateUser = () => {
-    //   Geolocation.getCurrentPosition(
-    //     (position: GeolocationPosition) => {
-    //       const {latitude, longitude} = position.coords;
-    //       setRegion({
-    //         latitude,
-    //         longitude,
-    //         latitudeDelta: 0.01,
-    //         longitudeDelta: 0.01,
-    //       });
-    //     },
-    //     (error: GeolocationPositionError) => {
-    //       console.log('Geolocation error:', error.message);
-    //     },
-    //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    //   );
-    // };
+
+    const getChargers = async () => {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fullName, password, email }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          // Handle successful sign-up
+          console.log('Sign-up successful', data);
+          navigation.navigate('SignIn')
+        } else {
+          // Handle sign-up error
+          console.log('Sign-up failed', data.message);
+        }
+      } catch (error) {
+        console.error('Error signing up:', error);
+      }
+    };
+
 
     const locateUser = () => {
       GetLocation.getCurrentPosition({
@@ -92,7 +113,6 @@ const MapPage = () => {
   return (
     <View style={styles.container}>
       <MapView
-        style={styles.map}
         region={region}
         showsUserLocation={true} >
         <Marker
@@ -102,16 +122,33 @@ const MapPage = () => {
           description="This is a thing"
         />
       </MapView>
+
+      <Modal animationType="slide" style={{
+        width: '90%',
+        height: '90%' }}>
+        <ChargerInfo options={chargerOptions} />
+      </Modal>
+
     </View>
   );
 };
 
+// const styles = StyleSheet.create({
+//   container: {
+//     ...StyleSheet.absoluteFillObject,
+//   },
+//   map: {
+//     ...StyleSheet.absoluteFillObject,
+//   },
+// });
+
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
 });
 

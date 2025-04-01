@@ -66,7 +66,7 @@ const SigninPage = ({navigation}) => {
         />
         {email !== '' && (
           <TouchableOpacity onPress={clearEmail} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -81,7 +81,7 @@ const SigninPage = ({navigation}) => {
         />
         {password !== '' && (
           <TouchableOpacity onPress={clearPassword} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -155,18 +155,20 @@ const styles = StyleSheet.create({
     color: "black"
   },
   clearButton: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 15,
-    width: 19,
-    height: 23,
+    borderWidth: 2,
+    borderColor: 'red',
+    borderRadius: 5,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+    marginTop: 0,
   },
   clearButtonText: {
     fontSize: 18,
-    color: 'gray',
+    color: 'red',
+    fontWeight: "bold"
   },
   googleButton: {
     backgroundColor: '#4285F4',
