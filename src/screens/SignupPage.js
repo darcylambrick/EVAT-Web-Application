@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { ConfigData } from '../data/config';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Image,
-  Switch,
-  TouchableOpacity,
-} from 'react-native';
+import {View,Text,TextInput,Button,StyleSheet,Image,Switch,TouchableOpacity,} from 'react-native';
 
 const config = ConfigData();
 const url = `${config.backend.ipAddress}:${config.backend.port}/api/auth/register`
@@ -34,7 +25,7 @@ const SignupPage = ({ navigation }) => {
       if (response.ok) {
         // Handle successful sign-up
         console.log('Sign-up successful', data);
-        navigation.navigate('SignIn')
+        navigation.navigate('Signin')
       } else {
         // Handle sign-up error
         console.log('Sign-up failed', data.message);
