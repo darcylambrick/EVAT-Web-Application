@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { ConfigData } from '../data/config';
-import {View,Text,TextInput,Button,StyleSheet,Image,Switch,TouchableOpacity,} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  StyleSheet,
+  Image,
+  Switch,
+  TouchableOpacity,
+} from 'react-native';
 
 const config = ConfigData();
 const url = `${config.backend.ipAddress}:${config.backend.port}/api/auth/register`
@@ -25,12 +35,15 @@ const SignupPage = ({ navigation }) => {
       if (response.ok) {
         // Handle successful sign-up
         console.log('Sign-up successful', data);
-        navigation.navigate('Signin')
+        Alert.alert('Successful Sign Up', "",
+                  [{text: 'Ok', onPress: () => navigation.navigate("Signin")}]);
       } else {
         // Handle sign-up error
+        Alert.alert('Sign Up Failed', data.message,[{text: 'Ok'}]);
         console.log('Sign-up failed', data.message);
       }
     } catch (error) {
+      Alert.alert('Error Signing Up', error,[{text: 'Ok'}]);
       console.error('Error signing up:', error);
     }
   };
@@ -65,7 +78,7 @@ const SignupPage = ({ navigation }) => {
         />
         {fullName !== '' && (
           <TouchableOpacity onPress={clearName} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -79,7 +92,7 @@ const SignupPage = ({ navigation }) => {
         />
         {email !== '' && (
           <TouchableOpacity onPress={clearEmail} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -94,7 +107,7 @@ const SignupPage = ({ navigation }) => {
         />
         {password !== '' && (
           <TouchableOpacity onPress={clearPassword} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -185,18 +198,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   clearButton: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 15,
-    width: 19,
-    height: 23,
+    borderWidth: 2,
+    borderColor: 'red',
+    borderRadius: 5,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+    marginTop: 0,
   },
   clearButtonText: {
     fontSize: 18,
-    color: 'gray',
+    color: 'red',
+    fontWeight: "bold"
   },
   subscriptionContainer: {
     flexDirection: 'row',

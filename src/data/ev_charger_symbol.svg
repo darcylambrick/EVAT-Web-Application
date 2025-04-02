@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="210mm"
+   viewBox="0 0 210 210"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="ev_charger_symbol.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.3190696"
+     inkscape:cx="381.32938"
+     inkscape:cy="521.2007"
+     inkscape:window-width="4300"
+     inkscape:window-height="1711"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#008c3c;fill-opacity:1;stroke:#000000;stroke-width:2.35567;stroke-linejoin:bevel;stroke-dashoffset:19.6535"
+       id="rect1"
+       width="171.79285"
+       height="159.38194"
+       x="22.538515"
+       y="25.970024"
+       ry="8.7328024" />
+    <rect
+       style="fill:#fffcff;fill-opacity:1;stroke:#000000;stroke-width:2.35567;stroke-linejoin:bevel;stroke-dashoffset:19.6535"
+       id="rect2"
+       width="54.215992"
+       height="113.33102"
+       x="124.11185"
+       y="56.017445"
+       ry="4.1139474" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:25.4px;line-height:1.1;font-family:Arial;-inkscape-font-specification:'Arial Bold';letter-spacing:0px;white-space:pre;inline-size:0;fill:#0b0000;fill-opacity:1;stroke:#000000;stroke-width:1.046;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:19.6535"
+       x="127.36676"
+       y="125.38109"
+       id="text2"
+       transform="matrix(1.1513558,0,0,1.1513558,-14.694155,-21.060717)"><tspan
+         id="tspan2"
+         style="font-size:25.4px;fill:#0b0000;fill-opacity:1;stroke:#000000;stroke-width:1.046;stroke-dasharray:none;stroke-opacity:1"
+         x="127.36676"
+         y="125.38109">EV</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:5.46433;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:19.6535;stroke-opacity:1"
+       d="m 61.485848,104.92615 c 0,0 -2.805562,22.87058 12.574189,29.88412 11.513639,5.25051 28.450843,2.84988 37.477613,-9.14488 3.92659,-5.21765 7.2154,-13.79665 7.22709,-16.90924 0.0122,-3.25225 0.44807,-7.83089 0.44807,-7.83089"
+       id="path4"
+       sodipodi:nodetypes="csssc" />
+    <rect
+       style="fill:#fffcff;fill-opacity:1;stroke:#000000;stroke-width:1.20432;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:19.6535;stroke-opacity:1"
+       id="rect3"
+       width="16.166811"
+       height="34.129955"
+       x="42.624561"
+       y="50.955105"
+       ry="0.41886231" />
+    <rect
+       style="fill:#fffcff;fill-opacity:1;stroke:#000000;stroke-width:1.20432;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:19.6535;stroke-opacity:1"
+       id="rect3-6"
+       width="16.166811"
+       height="34.129955"
+       x="65.227013"
+       y="51.145386"
+       ry="0.41886231" />
+    <rect
+       style="fill:#fffcff;fill-opacity:1;stroke:#000000;stroke-width:1.20432;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:19.6535;stroke-opacity:1"
+       id="rect4"
+       width="54.624245"
+       height="26.699743"
+       x="34.622803"
+       y="79.696114"
+       ry="5.4996037" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.46432;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:19.6535;stroke-opacity:1"
+       id="rect5"
+       width="12.410902"
+       height="17.473234"
+       x="112.35416"
+       y="87.452911"
+       ry="0.41886231" />
+  </g>
+</svg>

@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   Button,
+  Alert,
   StyleSheet,
   Image,
   TouchableOpacity,
@@ -31,12 +32,16 @@ const SigninPage = ({navigation}) => {
       if (response.ok) {
         // Handle successful sign-in, e.g., navigate to another screen or store user token
         console.log('Sign-in successful', data);
-        navigation.navigate("MapPage");
+        Alert.alert('Successful Sign In', "",
+          [{text: 'Ok', onPress: () => navigation.navigate("MapPage")}]);
+        
       } else {
         // Handle sign-in error, e.g., display an error message
         console.log('Sign-in failed', data.message);
+        Alert.alert('Failed Sign in', data.message, [{text: 'Ok',}]);
       }
     } catch (error) {
+      Alert.alert('Failed Sign In', error [{text: 'Ok',}]);
       console.error('Error signing in:', error);
     }
   };
@@ -66,7 +71,7 @@ const SigninPage = ({navigation}) => {
         />
         {email !== '' && (
           <TouchableOpacity onPress={clearEmail} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -81,7 +86,7 @@ const SigninPage = ({navigation}) => {
         />
         {password !== '' && (
           <TouchableOpacity onPress={clearPassword} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -155,18 +160,20 @@ const styles = StyleSheet.create({
     color: "black"
   },
   clearButton: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 15,
-    width: 19,
-    height: 23,
+    borderWidth: 2,
+    borderColor: 'red',
+    borderRadius: 5,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+    marginTop: 0,
   },
   clearButtonText: {
     fontSize: 18,
-    color: 'gray',
+    color: 'red',
+    fontWeight: "bold"
   },
   googleButton: {
     backgroundColor: '#4285F4',

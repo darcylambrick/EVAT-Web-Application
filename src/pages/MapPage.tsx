@@ -1,7 +1,24 @@
-declare const navigator: any;
+// declare const navigator: any;
 import GetLocation from 'react-native-get-location'
+import React, {useEffect, useState} from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  PermissionsAndroid,
+  Platform,
+  Modal,
+  Alert,
+  Dimensions,
+  Image
+} from 'react-native';
 
-console.log(GetLocation);
+import MapView, {Marker, Region} from 'react-native-maps';
+import {ChargerInfo} from '../components/ChargerInfo';
+import {ConfigData} from '../data/config';
+
+const config = ConfigData();
+const url = `${config.backend.ipAddress}:${config.backend.port}/api/station`
 
 type GeolocationPosition = {
   coords: {
@@ -21,12 +38,64 @@ type GeolocationPositionError = {
   message: string;
 };
 
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+//dummy data
+const chargerOptions = {
+  charger: {
+    title: "Charger 1",
+    location: {
+      latitude: -22.22222,
+      longitude: 111.11111
+    },
+    details: "This is a dummy charger"
+  }
+}
+
 
 const MapPage = () => {
   const [region, setRegion] = useState<Region | null>(null);
+  const [error, setError] = useState<boolean | null>(null);
+  const [chargers, setChargers] = useState<Object | null>(null);
+
+  const getChargers = async (location: {}, distance: number) => {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({location, distance}),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Handle successful get of chargers
+        setChargers(data.chargers);
+        //populate map with icons
+      } else {
+        // Handle get chargers error
+        //alert user to error
+        Alert.alert('Getting Chargers', 'Problem', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+      }
+    } catch (error) {
+      Alert.alert('Getting Chargers', 'Problem', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
+    }
+  };
+
+
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -36,29 +105,14 @@ const MapPage = () => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           locateUser();
+          getChargers();
         }
       } else {
         locateUser();
+        getChargers();
       }
     };
 
-    // const locateUser = () => {
-    //   Geolocation.getCurrentPosition(
-    //     (position: GeolocationPosition) => {
-    //       const {latitude, longitude} = position.coords;
-    //       setRegion({
-    //         latitude,
-    //         longitude,
-    //         latitudeDelta: 0.01,
-    //         longitudeDelta: 0.01,
-    //       });
-    //     },
-    //     (error: GeolocationPositionError) => {
-    //       console.log('Geolocation error:', error.message);
-    //     },
-    //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    //   );
-    // };
 
     const locateUser = () => {
       GetLocation.getCurrentPosition({
@@ -67,7 +121,7 @@ const MapPage = () => {
       })
         .then(location => {
           console.log(location);
-          const { latitude, longitude } = location;
+          const {latitude, longitude} = location;
           setRegion({
             latitude,
             longitude,
@@ -77,6 +131,7 @@ const MapPage = () => {
         })
         .catch(error => {
           const { code, message } = error;
+          console.log("Error with locate user")
           console.warn(code, message);
         })
     };
@@ -92,7 +147,7 @@ const MapPage = () => {
   return (
     <View style={styles.container}>
       <MapView
-        style={styles.map}
+      style={styles.map}
         region={region}
         showsUserLocation={true} >
         <Marker
@@ -100,18 +155,37 @@ const MapPage = () => {
           coordinate={region}
           title="Test"
           description="This is a thing"
-        />
+          image={require('../data/ev_charger_symbol.svg')}
+        >
+        </Marker>
       </MapView>
+
+      {/* <Modal animationType="slide" style={{
+        width: '90%',
+        height: '90%' }}>
+        <ChargerInfo options={chargerOptions} />
+      </Modal> */}
+
     </View>
   );
 };
 
+// const styles = StyleSheet.create({
+//   container: {
+//     ...StyleSheet.absoluteFillObject,
+//   },
+//   map: {
+//     ...StyleSheet.absoluteFillObject,
+//   },
+// });
+
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
 });
 
