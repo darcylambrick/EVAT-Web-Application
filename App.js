@@ -15,9 +15,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Signin" component={SigninPage} />
-        <Stack.Screen name="Signup" component={SignupPage} />
-        <Stack.Screen name="MapPage" component={MapPage} />
+        <Stack.Screen name="Signin" component={SigninPage} options={{title: "EVAT Sign In"}}/>
+        <Stack.Screen name="Signup" component={SignupPage} options={{title: "EVAT Sign Up"}}/>
+        <Stack.Screen name="MapPage" component={MapPage}  options={{title: "EVAT"}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

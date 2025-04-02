@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   Button,
+  Alert,
   StyleSheet,
   Image,
   TouchableOpacity,
@@ -31,12 +32,16 @@ const SigninPage = ({navigation}) => {
       if (response.ok) {
         // Handle successful sign-in, e.g., navigate to another screen or store user token
         console.log('Sign-in successful', data);
-        navigation.navigate("MapPage");
+        Alert.alert('Successful Sign In', "",
+          [{text: 'Ok', onPress: () => navigation.navigate("MapPage")}]);
+        
       } else {
         // Handle sign-in error, e.g., display an error message
         console.log('Sign-in failed', data.message);
+        Alert.alert('Failed Sign in', data.message, [{text: 'Ok',}]);
       }
     } catch (error) {
+      Alert.alert('Failed Sign In', error [{text: 'Ok',}]);
       console.error('Error signing in:', error);
     }
   };
