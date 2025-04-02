@@ -12,7 +12,7 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY_MITCHELL); // Re
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const EVAT_AI = () => {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY; // Replace with your Google Maps API Key
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY2; // Replace with your Google Maps API Key
   /**
    * Extract locations from a natural language sentence.
    * @param {string} sentence - The sentence to extract locations from.

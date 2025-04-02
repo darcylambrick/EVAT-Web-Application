@@ -1,40 +1,48 @@
 import React, {useState} from 'react';
-import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { ConfigData } from '../data/config';
 import {
   View,
   Text,
   TextInput,
   Button,
+  Alert,
   StyleSheet,
   Image,
   TouchableOpacity,
 } from 'react-native';
-const API_URL = "http://evat.ddns.net:8080/api/auth/login";
+
+const config = ConfigData();
+const url = `${config.backend.ipAddress}:${config.backend.port}/api/auth/login`
+
 const SigninPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleEmailSignin = async () => {
     try {
-      const response = await fetch("http://evat.ddns.net:8080/api/auth/login", {
-        method: "POST",
+      const response = await fetch(url, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({email, password}),
       });
 
       const data = await response.json();
       if (response.ok) {
-        console.log("Sign-in successful", data);
+        // Handle successful sign-in, e.g., navigate to another screen or store user token
+        console.log('Sign-in successful', data);
+        Alert.alert('Successful Sign In', "",
+          [{text: 'Ok', onPress: () => navigation.navigate("MapPage")}]);
+        
       } else {
-        console.log("Sign-in failed", data.message);
+        // Handle sign-in error, e.g., display an error message
+        console.log('Sign-in failed', data.message);
+        Alert.alert('Failed Sign in', data.message, [{text: 'Ok',}]);
       }
     } catch (error) {
-      console.error("Error signing in:", error.message);
+      Alert.alert('Failed Sign In', error [{text: 'Ok',}]);
+      console.error('Error signing in:', error);
     }
   };
 
@@ -63,7 +71,7 @@ const SigninPage = ({navigation}) => {
         />
         {email !== '' && (
           <TouchableOpacity onPress={clearEmail} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -78,11 +86,16 @@ const SigninPage = ({navigation}) => {
         />
         {password !== '' && (
           <TouchableOpacity onPress={clearPassword} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
 
+      <TouchableOpacity style={styles.emailButton} onPress={handleEmailSignin}>
+        <Text style={styles.emailButtonText}>Sign In</Text>
+      </TouchableOpacity>
+
+      {/*
       <TouchableOpacity
         style={styles.googleButton}
         onPress={handleGoogleSignin}>
@@ -93,21 +106,20 @@ const SigninPage = ({navigation}) => {
         <Text style={styles.buttonText}>Sign In with Apple</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.emailButton} onPress={handleEmailSignin}>
-        <Text style={styles.emailButtonText}>Sign In</Text>
-      </TouchableOpacity>
-
+      */}
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.signupText}>
           Don't you have an account? Go to Sign Up
         </Text>
       </TouchableOpacity>
 
+      {/*
       <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')}>
         <Text style={styles.signupText}>
           Forgot password? Click here to reset.
         </Text>
       </TouchableOpacity>
+      */}
     </View>
   );
 };
@@ -145,20 +157,23 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 8,
+    color: "black"
   },
   clearButton: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 15,
-    width: 19,
-    height: 23,
+    borderWidth: 2,
+    borderColor: 'red',
+    borderRadius: 5,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+    marginTop: 0,
   },
   clearButtonText: {
     fontSize: 18,
-    color: 'gray',
+    color: 'red',
+    fontWeight: "bold"
   },
   googleButton: {
     backgroundColor: '#4285F4',

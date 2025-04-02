@@ -1,68 +1,55 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
+import { ConfigData } from '../data/config';
 import {
   View,
   Text,
   TextInput,
   Button,
+  Alert,
   StyleSheet,
   Image,
   Switch,
   TouchableOpacity,
 } from 'react-native';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
 
-const SignupPage = ({navigation}) => {
-  const [name, setName] = useState('');
-  const [country, setCountry] = useState('');
-  const [phone, setPhone] = useState('');
+const config = ConfigData();
+const url = `${config.backend.ipAddress}:${config.backend.port}/api/auth/register`
+
+const SignupPage = ({ navigation }) => {
+  const [fullName, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: '166405730174-5mt7aejm4mb9kj5trbmo2tal43k3sh9q.apps.googleusercontent.com', // Replace with your Web Client ID
-    });
-  }, []);
 
   const handleEmailSignup = async () => {
     try {
-      const response = await fetch('http://localhost:8001/api/auth/signup', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({name, country, phone, isSubscribed}),
+        body: JSON.stringify({ fullName, password, email }),
       });
 
       const data = await response.json();
       if (response.ok) {
         // Handle successful sign-up
         console.log('Sign-up successful', data);
+        Alert.alert('Successful Sign Up', "",
+                  [{text: 'Ok', onPress: () => navigation.navigate("Signin")}]);
       } else {
         // Handle sign-up error
+        Alert.alert('Sign Up Failed', data.message,[{text: 'Ok'}]);
         console.log('Sign-up failed', data.message);
       }
     } catch (error) {
+      Alert.alert('Error Signing Up', error,[{text: 'Ok'}]);
       console.error('Error signing up:', error);
     }
   };
 
-  const handleGoogleSignup = async () => {
-    try {
-      // Start the Google Sign-in process
-      await GoogleSignin.hasPlayServices();
-      const { idToken } = await GoogleSignin.signIn();
-
-      // Create Google credentials for Firebase
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      // Sign in with Firebase using the Google credentials
-      await auth().signInWithCredential(googleCredential);
-
-      console.log('User signed up with Google!');
-    } catch (error) {
-      console.error('Google sign-up error:', error);
-    }
+  const handleGoogleSignup = () => {
+    // Implement Google sign up logic
   };
 
   const handleAppleSignup = () => {
@@ -74,8 +61,8 @@ const SignupPage = ({navigation}) => {
   };
 
   const clearName = () => setName('');
-  const clearCountry = () => setCountry('');
-  const clearPhone = () => setPhone('');
+  const clearEmail = () => setEmail('');
+  const clearPassword = () => setPassword('');
 
   return (
     <View style={styles.container}>
@@ -86,12 +73,12 @@ const SignupPage = ({navigation}) => {
         <TextInput
           style={styles.input}
           placeholder="Name"
-          value={name}
+          value={fullName}
           onChangeText={setName}
         />
-        {name !== '' && (
+        {fullName !== '' && (
           <TouchableOpacity onPress={clearName} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -99,13 +86,13 @@ const SignupPage = ({navigation}) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Country"
-          value={country}
-          onChangeText={setCountry}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
         />
-        {country !== '' && (
-          <TouchableOpacity onPress={clearCountry} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+        {email !== '' && (
+          <TouchableOpacity onPress={clearEmail} style={styles.clearButton}>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -113,13 +100,14 @@ const SignupPage = ({navigation}) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Phone"
-          value={phone}
-          onChangeText={setPhone}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
         />
-        {phone !== '' && (
-          <TouchableOpacity onPress={clearPhone} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>×</Text>
+        {password !== '' && (
+          <TouchableOpacity onPress={clearPassword} style={styles.clearButton}>
+            <Text style={styles.clearButtonText}>X</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -131,6 +119,30 @@ const SignupPage = ({navigation}) => {
         </Text>
         <Switch value={isSubscribed} onValueChange={toggleSubscription} />
       </View>
+
+
+
+      {/*
+      <TouchableOpacity style={styles.appleButton} onPress={handleGoogleSignup}>
+        <Text style={styles.emailButtonText}>Sign Up with Google</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.appleButton} onPress={handleAppleSignup}>
+        <Text style={styles.emailButtonText}>Sign Up with Apple</Text>
+      </TouchableOpacity>
+      */}
+
+      <TouchableOpacity style={styles.appleButton} onPress={handleEmailSignup}>
+        <Text style={styles.emailButtonText}>Create</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.appleButton}
+        onPress={() => navigation.navigate('Signin')}>
+        <Text style={styles.emailButtonText}>
+          Already have an account? Sign In
+        </Text>
+      </TouchableOpacity>
 
       <View style={styles.legalContainer}>
         <TouchableOpacity
@@ -147,26 +159,6 @@ const SignupPage = ({navigation}) => {
           <Text style={styles.legalText}>Terms & Conditions</Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity style={styles.appleButton} onPress={handleEmailSignup}>
-        <Text style={styles.emailButtonText}>Next</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.appleButton} onPress={handleGoogleSignup}>
-        <Text style={styles.emailButtonText}>Sign Up with Google</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.appleButton} onPress={handleAppleSignup}>
-        <Text style={styles.emailButtonText}>Sign Up with Apple</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.appleButton}
-        onPress={() => navigation.navigate('Signin')}>
-        <Text style={styles.emailButtonText}>
-          Already have an account? Sign In
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -206,18 +198,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   clearButton: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 15,
-    width: 19,
-    height: 23,
+    borderWidth: 2,
+    borderColor: 'red',
+    borderRadius: 5,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+    marginTop: 0,
   },
   clearButtonText: {
     fontSize: 18,
-    color: 'gray',
+    color: 'red',
+    fontWeight: "bold"
   },
   subscriptionContainer: {
     flexDirection: 'row',
