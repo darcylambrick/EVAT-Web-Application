@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,20 @@ import {
   Switch,
   TouchableOpacity,
 } from 'react-native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 const SignupPage = ({navigation}) => {
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
   const [phone, setPhone] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '166405730174-5mt7aejm4mb9kj5trbmo2tal43k3sh9q.apps.googleusercontent.com', // Replace with your Web Client ID
+    });
+  }, []);
 
   const handleEmailSignup = async () => {
     try {
@@ -39,8 +47,22 @@ const SignupPage = ({navigation}) => {
     }
   };
 
-  const handleGoogleSignup = () => {
-    // Implement Google sign up logic
+  const handleGoogleSignup = async () => {
+    try {
+      // Start the Google Sign-in process
+      await GoogleSignin.hasPlayServices();
+      const { idToken } = await GoogleSignin.signIn();
+
+      // Create Google credentials for Firebase
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign in with Firebase using the Google credentials
+      await auth().signInWithCredential(googleCredential);
+
+      console.log('User signed up with Google!');
+    } catch (error) {
+      console.error('Google sign-up error:', error);
+    }
   };
 
   const handleAppleSignup = () => {

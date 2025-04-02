@@ -1,4 +1,7 @@
 import React, {useState} from 'react';
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   View,
   Text,
@@ -8,31 +11,30 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-
+const API_URL = "http://evat.ddns.net:8080/api/auth/login";
 const SigninPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleEmailSignin = async () => {
     try {
-      const response = await fetch('http://localhost:8001/api/auth/signin', {
-        method: 'POST',
+      const response = await fetch("http://evat.ddns.net:8080/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify({email, password}),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
       if (response.ok) {
-        // Handle successful sign-in, e.g., navigate to another screen or store user token
-        console.log('Sign-in successful', data);
+        console.log("Sign-in successful", data);
       } else {
-        // Handle sign-in error, e.g., display an error message
-        console.log('Sign-in failed', data.message);
+        console.log("Sign-in failed", data.message);
       }
     } catch (error) {
-      console.error('Error signing in:', error);
+      console.error("Error signing in:", error.message);
     }
   };
 
