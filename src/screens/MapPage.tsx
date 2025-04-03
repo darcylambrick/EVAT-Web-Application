@@ -1,6 +1,6 @@
 // declare const navigator: any;
 import GetLocation from 'react-native-get-location'
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -10,12 +10,14 @@ import {
   Modal,
   Alert,
   Dimensions,
-  Image
+  Image,
+  Button
 } from 'react-native';
 
-import MapView, {Marker, Region} from 'react-native-maps';
-import {ChargerInfo} from '../components/ChargerInfo';
-import {ConfigData} from '../data/config';
+import MapView, { Marker, Region } from 'react-native-maps';
+import { ChargerInfo } from '../components/ChargerInfo';
+import { ConfigData } from '../data/config';
+import NavBar from '../components/Navbar';
 
 const config = ConfigData();
 const url = `${config.backend.ipAddress}:${config.backend.port}/api/station`
@@ -50,6 +52,12 @@ const chargerOptions = {
   }
 }
 
+const dummyChargerLocations = [
+  { latitude: -37.792024, longitude: 145.061820, title: "One", identifier: "1", description: "Paid charger: Tesla" },
+  { latitude: -37.795098, longitude: 145.071813, title: "Two", identifier: "2", description: "Free charger: Type 2" },
+  { latitude: -37.790100, longitude: 145.073513, title: "Three", identifier: "3", description: "Paid charger: Tesla" }
+]
+
 
 const MapPage = () => {
   const [region, setRegion] = useState<Region | null>(null);
@@ -63,7 +71,7 @@ const MapPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({location, distance}),
+        body: JSON.stringify({ location, distance }),
       });
 
       const data = await response.json();
@@ -71,26 +79,17 @@ const MapPage = () => {
         // Handle successful get of chargers
         setChargers(data.chargers);
         //populate map with icons
+
       } else {
         // Handle get chargers error
         //alert user to error
         Alert.alert('Getting Chargers', 'Problem', [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
         ]);
       }
     } catch (error) {
       Alert.alert('Getting Chargers', 'Problem', [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
     }
   };
@@ -108,7 +107,7 @@ const MapPage = () => {
           getChargers();
         }
       } else {
-        locateUser();
+        // locateUser();
         getChargers();
       }
     };
@@ -121,7 +120,7 @@ const MapPage = () => {
       })
         .then(location => {
           console.log(location);
-          const {latitude, longitude} = location;
+          const { latitude, longitude } = location;
           setRegion({
             latitude,
             longitude,
@@ -144,49 +143,61 @@ const MapPage = () => {
     return null;
   }
 
+
   return (
-    <View style={styles.container}>
-      <MapView
-      style={styles.map}
-        region={region}
-        showsUserLocation={true} >
-        <Marker
-          key={1}
-          coordinate={region}
-          title="Test"
-          description="This is a thing"
-          image={require('../data/ev_charger_symbol.svg')}
-        >
-        </Marker>
+      <View style={styles.container}>
+        <MapView
+          style={styles.map}
+          region={region}
+          showsUserLocation={true}>
+          {dummyChargerLocations.map((loc, i) => 
+          <Marker
+            key={i}
+            identifier={loc.identifier}
+            // onPress={() => setChargerInfo(chargerOptions)}
+            coordinate={{latitude: loc.latitude, longitude: loc.longitude }}
+            title={loc.title}
+            description={loc.description}
+            // image={require('../data/ev_charger_symbol.webp')}
+            // onPress={}
+            onCalloutPress={() => Alert.alert("Charger Information", loc.description)} >
+          <Image source={require('../data/ev_charger_symbol.webp')} style={styles.marker} />
+        </Marker>)}
       </MapView>
-
-      {/* <Modal animationType="slide" style={{
-        width: '90%',
-        height: '90%' }}>
-        <ChargerInfo options={chargerOptions} />
-      </Modal> */}
-
-    </View>
+      {/* <View style={styles.navbar}>
+      </View> */}
+      <NavBar/>
+    </View >
   );
 };
 
-// const styles = StyleSheet.create({
-//   container: {
-//     ...StyleSheet.absoluteFillObject,
-//   },
-//   map: {
-//     ...StyleSheet.absoluteFillObject,
-//   },
-// });
-
 const styles = StyleSheet.create({
   container: {
+    ...StyleSheet.absoluteFillObject,
     flex: 1,
   },
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
   },
+  marker: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
+  },
+  navbar: {
+    width: Dimensions.get('window').width,
+    height: 40,
+    backgroundColor: 'red',
+    position: 'absolute',
+    bottom: 0,
+  },
+  // chargerButton: {
+  //   width: 100,
+  //   height: 50,
+  //   borderRadius: 5,
+  //   backgroundColor: 'red',
+  // },
 });
 
 export default MapPage;
