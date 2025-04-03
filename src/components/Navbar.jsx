@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Image } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 function NavBar(props) {
@@ -8,16 +8,19 @@ function NavBar(props) {
     const { searchFunction, settingsFunction } = props;
     return (
         <View style={styles.navbar}>
+            
             <TouchableOpacity style={styles.navbutton}>
-                {/* <Icon size={30} name="search"/> */}
+                <Image style={styles.navbarIcon} source={require("../data/search.webp")}></Image>
                 <Text style={styles.navbuttonText}>Search</Text>
             </TouchableOpacity>
             <View style={styles.verticleLine}></View>
             <TouchableOpacity style={styles.navbutton}>
+            <Image style={styles.navbarIcon} source={require("../data/config.webp")}></Image>
                 <Text style={styles.navbuttonText}>Settings</Text>
             </TouchableOpacity>
             <View style={styles.verticleLine}></View>
             <TouchableOpacity style={styles.navbutton}>
+            <Image style={styles.navbarIcon} source={require("../data/signout.webp")}></Image>
                 <Text style={styles.navbuttonText}>Sign Out</Text>
             </TouchableOpacity>
         </View>
@@ -49,6 +52,8 @@ const styles = StyleSheet.create({
         // backgroundColor: '#66aa66',
         color: 'red',
         justifyContent: 'center',
+        flexDirection: 'row',
+        paddingTop: 10,
         textAlign: 'center',
     },
     verticleLine:{
@@ -61,6 +66,15 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center',
         justifyContent: 'center',
+    },
+    navbarIcon: {
+        padding: 0,
+        margin: 0,
+        width: 32,
+        height: 32,
+        textAlign: 'center',
+        alignItems: 'center',
+        marginRight: 5,
     }
 })
 

@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 import MapView, { Marker, Region } from 'react-native-maps';
-import ChargerMarker from '../components/ChargerInfo';
+import { ChargerInfo } from '../components/ChargerInfo';
 import { ConfigData } from '../data/config';
 import NavBar from '../components/Navbar';
 
@@ -68,18 +68,19 @@ const MapPage = () => {
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         await locateUser();
+        getChargers(region, 1000);  // 1000m radius
       }
     } else {
       //handle position granted
 
     }
   };
-
+  
 
 
   const getChargers = async (location: {}, distance: number) => {
     try {
-      const response = await fetch(`${url}?lat=${location.latitude}&lon=${location.longitude}&distance=10000`, {
+      const response = await fetch(`${url}?lat=${location.latitude}&lon=${location.longitude}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -108,27 +109,26 @@ const MapPage = () => {
         enableHighAccuracy: true,
         timeout: 60000,
       });
-
+  
       const { latitude, longitude } = location;
-
+  
       setRegion({
         latitude,
         longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       });
-
+  
     } catch (error) {
       console.log("Error locating user:", error);
     }
   };
 
-  useEffect(() => { requestLocationPermission() }, []);
+  useEffect(() => {requestLocationPermission()}, []);
 
   useEffect(() => {
     if (region) {
-      console.log(region)
-      getChargers(region, 30000);
+      getChargers(region, 1000);
     }
   }, [region]);
 
@@ -144,10 +144,29 @@ const MapPage = () => {
         style={styles.map}
         region={region}
         showsUserLocation={true}>
+        {/* {FakeChargers.map(charger =>
+            <Marker
+              key={`${charger.id}`}
+              identifier={`${charger.id}`}
+              // onPress={() => setChargerInfo(chargerOptions)}
+              coordinate={ {latitude: charger.lat, longitude: charger.lon }}
+              title={charger.title?.toString() || charger.brand?.toString() || charger.name?.toString() || "Charger"}
+              description={charger?.description ? charger.description : "No description"}
+              onCalloutPress={() => {
+                const info = Object.entries(charger)
+                  .map(([key, value]) => `${key}: ${value}`)
+                  .join('\n');
+          
+                Alert.alert("Charger Information", info, [
+                  { text: 'OK', onPress: () => console.log('OK Pressed') }
+                ]);
+              }}
+            >
+            <Image source={require('../data/ev_charger_symbol.webp')} style={styles.marker} />
+          </Marker>)} */}
 
-        {region && chargers && chargers.map(charger => <ChargerMarker key={`${charger.id}`} charger={charger} />)}
 
-        {/* {region && chargers && chargers.map(charger =>
+        {region && chargers && chargers.map(charger =>
           <Marker
             key={`${charger.id}`}
             identifier={`${charger.id}`}
@@ -166,7 +185,7 @@ const MapPage = () => {
             }}
           >
             <Image source={require('../data/ev_charger_symbol.webp')} style={styles.marker} />
-          </Marker>)} */}
+          </Marker>)}
 
       </MapView>
       {/* <View style={styles.navbar}>

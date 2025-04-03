@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Inknut Antiqua',
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     marginBottom: 20,
   },
   inputContainer: {
@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 8,
+    color: "black"
   },
   clearButton: {
     borderWidth: 2,
