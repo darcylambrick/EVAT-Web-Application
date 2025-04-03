@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     verticleLine:{
         height: '60%',
         width: 2,
-        backgroundColor: '#666',
+        backgroundColor: '#DDD',
       },
     navbuttonText: {
         color: '#fff',

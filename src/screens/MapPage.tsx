@@ -158,9 +158,10 @@ const MapPage = () => {
             coordinate={{latitude: loc.latitude, longitude: loc.longitude }}
             title={loc.title}
             description={loc.description}
+            // image={require('../data/ev_charger_symbol.webp')}
             // onPress={}
             onCalloutPress={() => Alert.alert("Charger Information", loc.description)} >
-          <Image source={require('../data/ev_charger_symbol.png')} style={styles.marker} />
+          <Image source={require('../data/ev_charger_symbol.webp')} style={styles.marker} />
         </Marker>)}
       </MapView>
       {/* <View style={styles.navbar}>
