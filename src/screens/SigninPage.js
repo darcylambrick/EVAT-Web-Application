@@ -32,16 +32,16 @@ const SigninPage = ({navigation}) => {
       if (response.ok) {
         // Handle successful sign-in, e.g., navigate to another screen or store user token
         console.log('Sign-in successful', data);
-        Alert.alert('Successful Sign In', "",
+        Alert.alert('✅ Sign In', "Success",
           [{text: 'Ok', onPress: () => navigation.navigate("MapPage")}]);
         
       } else {
         // Handle sign-in error, e.g., display an error message
-        console.log('Sign-in failed', data.message);
-        Alert.alert('Failed Sign in', data.message, [{text: 'Ok',}]);
+        console.log('❌ Sign-in', data.message);
+        Alert.alert('❌ Sign in', data.message, [{text: 'Ok',}]);
       }
     } catch (error) {
-      Alert.alert('Failed Sign In', error [{text: 'Ok',}]);
+      Alert.alert('❌ Sign In', error [{text: 'Ok',}]);
       console.error('Error signing in:', error);
     }
   };
@@ -66,6 +66,7 @@ const SigninPage = ({navigation}) => {
         <TextInput
           style={styles.input}
           placeholder="Email"
+          placeholderTextColor="#777"
           value={email}
           onChangeText={setEmail}
         />
@@ -80,6 +81,7 @@ const SigninPage = ({navigation}) => {
         <TextInput
           style={styles.input}
           placeholder="Password"
+          placeholderTextColor="#777"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -91,7 +93,7 @@ const SigninPage = ({navigation}) => {
         )}
       </View>
 
-      <TouchableOpacity style={styles.emailButton} onPress={handleEmailSignin}>
+      <TouchableOpacity  style={styles.emailButton} onPress={handleEmailSignin}>
         <Text style={styles.emailButtonText}>Sign In</Text>
       </TouchableOpacity>
 
@@ -107,7 +109,7 @@ const SigninPage = ({navigation}) => {
       </TouchableOpacity>
 
       */}
-      <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+      <TouchableOpacity color={"#64b131"} onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.signupText}>
           Don't you have an account? Go to Sign Up
         </Text>
@@ -130,6 +132,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 16,
     backgroundColor: '#ffffff',
+  },
+  inputContainer: {
+    color: "black"
   },
   logo: {
     width: 100,
@@ -192,7 +197,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   emailButton: {
-    backgroundColor: '#4285F4',
+    // backgroundColor: '#4285F4',
+    backgroundColor: '#2e9963',
     padding: 16,
     borderRadius: 8,
     borderColor: '#000000',
@@ -211,8 +217,9 @@ const styles = StyleSheet.create({
   },
   signupText: {
     textAlign: 'center',
-    color: '#4285F4',
+    color: '#2e9963',
     marginTop: 16,
+    marginBottom: 100,
   },
 });
 

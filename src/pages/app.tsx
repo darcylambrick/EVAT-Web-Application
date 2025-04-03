@@ -1,5 +1,5 @@
 import React from 'react';
-import MapPage from './MapPage'; 
+import MapPage from '../screens/MapPage'; 
 
 const App = () => {
   return <MapPage />;

@@ -158,7 +158,8 @@ const MapPage = () => {
             coordinate={{latitude: loc.latitude, longitude: loc.longitude }}
             title={loc.title}
             description={loc.description}
-            onPress={() => Alert.alert("Charger Info", loc.description)} >
+            // onPress={}
+            onCalloutPress={() => Alert.alert("Charger Information", loc.description)} >
           <Image source={require('../data/ev_charger_symbol.png')} style={styles.marker} />
         </Marker>)}
       </MapView>
@@ -168,15 +169,6 @@ const MapPage = () => {
     </View >
   );
 };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     ...StyleSheet.absoluteFillObject,
-//   },
-//   map: {
-//     ...StyleSheet.absoluteFillObject,
-//   },
-// });
 
 const styles = StyleSheet.create({
   container: {

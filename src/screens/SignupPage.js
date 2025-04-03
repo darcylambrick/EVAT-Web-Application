@@ -34,16 +34,16 @@ const SignupPage = ({ navigation }) => {
       const data = await response.json();
       if (response.ok) {
         // Handle successful sign-up
-        console.log('Sign-up successful', data);
-        Alert.alert('Successful Sign Up', "",
+        console.log('✅ Sign-up successful', data);
+        Alert.alert('✅ Sign Up', "Success"
                   [{text: 'Ok', onPress: () => navigation.navigate("Signin")}]);
       } else {
         // Handle sign-up error
-        Alert.alert('Sign Up Failed', data.message,[{text: 'Ok'}]);
+        Alert.alert('❌ Sign Up', ` ${data.message}`,[{text: 'Ok'}]);
         console.log('Sign-up failed', data.message);
       }
     } catch (error) {
-      Alert.alert('Error Signing Up', error,[{text: 'Ok'}]);
+      Alert.alert('❌ Sign Up', ` ${error}`,[{text: 'Ok'}]);
       console.error('Error signing up:', error);
     }
   };
@@ -73,6 +73,7 @@ const SignupPage = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Name"
+          placeholderTextColor="#777"
           value={fullName}
           onChangeText={setName}
         />
@@ -87,6 +88,7 @@ const SignupPage = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Email"
+          placeholderTextColor="#777"
           value={email}
           onChangeText={setEmail}
         />
@@ -101,6 +103,7 @@ const SignupPage = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Password"
+          placeholderTextColor="#777"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -230,12 +233,12 @@ const styles = StyleSheet.create({
   },
   legalText: {
     fontSize: 14,
-    color: 'blue',
+    color: '#2e9963',
     textDecorationLine: 'underline',
     marginTop: 10,
   },
   appleButton: {
-    backgroundColor: '#4285F4',
+    backgroundColor: '#2e9963',
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
