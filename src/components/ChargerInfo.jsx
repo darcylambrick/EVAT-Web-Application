@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, Alert } from 'react-native'
 import { Marker } from 'react-native-maps';
 
+
 // import component 👇
 
 
@@ -23,11 +24,25 @@ function ChargerMarker(props) {
   }
 
   const createChargerAlert = () => {
-    const info = `Charger Name: ${charger.name}\nCharger Vicinity: ${charger.vicinity}\nCharger Type: ${charger.type}\nCharger Status: ${charger.status}\nRating: ${createRatingStars()} ${charger.rating}\n` 
+    const info = `Charger Name: ${charger.name}\nCharger Vicinity: ${charger.vicinity}\nCharger Type: ${charger.type}\nCharger Status: ${charger.status}\nRating: ${createRatingStars()} ${charger.rating}\n`;
 
     Alert.alert(title, info, [
-      { text: 'Got To Charger', onPress: () => console.log('OK Pressed') },
-      { text: 'Exit', onPress: () => console.log('Exit Pressed') }
+      {
+        text: 'Got To Charger',
+        onPress: () => {
+          // Update the selected charger location in the parent MapPage component
+          const chargerLocation = {
+            latitude: charger.geometry.location.lat,
+            longitude: charger.geometry.location.lng
+          };
+          props.onPress(chargerLocation); // Pass the location to the parent MapPage component
+          console.log('Route will be calculated to this charger.');
+        }
+      },
+      {
+        text: 'Exit',
+        onPress: () => console.log('Exit Pressed')
+      }
     ]);
   }
 

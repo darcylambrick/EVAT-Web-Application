@@ -21,6 +21,9 @@ import ChargerMarker from '../components/ChargerInfo';
 import { ConfigData } from '../data/config';
 import NavBar from '../components/Navbar';
 import SearchModal from '../components/SearchModal';
+import MapViewDirections from 'react-native-maps-directions';
+
+
 
 const config = ConfigData();
 const url = `https://evat.vt2.app/api/navigation/getchargersnode`
@@ -32,6 +35,7 @@ const MapPage = () => {
   const [chargers, setChargers] = useState<Object | null>(null);
   const [searchWindow, setSearchWindow] = useState<Boolean | false>(false);
   const { user, setUser } = useContext(UserContext);
+  const [selectedCharger, setSelectedCharger] = useState<{ latitude: number; longitude: number } | null>(null);
 
   const navigation = useNavigation();
 
@@ -116,6 +120,8 @@ const MapPage = () => {
     }
   };
 
+
+
   useEffect(() => { requestLocationPermission() }, []);
 
   useEffect(() => {
@@ -132,17 +138,44 @@ const MapPage = () => {
 
 
   return (
-    <View style={styles.container}>
-      <SearchModal visible={searchWindow} onClose={() => setSearchWindow(false)} />
-      <MapView
-        style={styles.map}
-        region={region}
-        showsUserLocation={true}>
-        {region && chargers && chargers.map((charger, idx) => <ChargerMarker key={`${idx}`} charger={charger} />)}
-      </MapView>
-      <NavBar searchFunction={searchFunction} settingsFunction={settingsFunction} />
-    </View >
-  );
+      <View style={styles.container}>
+        <SearchModal visible={searchWindow} onClose={() => setSearchWindow(false)} />
+        <MapView
+          style={styles.map}
+          region={region}
+          showsUserLocation={true}
+        >
+          {region && chargers && chargers.map((charger, idx) => (
+            <ChargerMarker
+              key={`${idx}`}
+              charger={charger}
+              onPress={(location) => {
+                setSelectedCharger(location);  // Update selected charger location
+              }}
+            />
+          ))}
+
+          {selectedCharger && (
+            <MapViewDirections
+              origin={{ latitude: region.latitude, longitude: region.longitude }}
+              destination={selectedCharger}
+              apikey={"AIzaSyDCzcXBa_XmfVjGsapneInLFHruLdEit28"}  // Make sure to replace with your actual API key
+              strokeWidth={4}
+              strokeColor="blue"
+              onReady={result => {
+                console.log(`Route found. Distance: ${result.distance} km, Duration: ${result.duration} min`);
+              }}
+              onError={errorMessage => {
+                console.error("Directions error:", errorMessage);
+              }}
+            />
+          )}
+        </MapView>
+
+        <NavBar searchFunction={searchFunction} settingsFunction={settingsFunction} />
+      </View>
+    );
+
 };
 
 const styles = StyleSheet.create({
