@@ -160,7 +160,7 @@ const MapPage = () => {
               origin={{ latitude: region.latitude, longitude: region.longitude }}
               destination={selectedCharger}
               apikey={"AIzaSyDCzcXBa_XmfVjGsapneInLFHruLdEit28"}  // Make sure to replace with your actual API key
-              strokeWidth={4}
+              strokeWidth={6}
               strokeColor="blue"
               onReady={result => {
                 console.log(`Route found. Distance: ${result.distance} km, Duration: ${result.duration} min`);
