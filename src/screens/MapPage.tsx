@@ -1,19 +1,20 @@
-// declare const navigator: any;
-import GetLocation from 'react-native-get-location'
-import React, { useEffect, useState, useContext, useLayoutEffect } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useLayoutEffect,
+  useRef, // ✅ added
+} from 'react';
 import { UserContext } from '../context/user.context';
-import {useNavigation} from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
 import {
   Text,
   View,
   StyleSheet,
   PermissionsAndroid,
   Platform,
-  Modal,
   Alert,
   Dimensions,
-  Image,
-  Button
 } from 'react-native';
 
 import MapView, { Region } from 'react-native-maps';
@@ -22,14 +23,13 @@ import { ConfigData } from '../data/config';
 import NavBar from '../components/Navbar';
 import SearchModal from '../components/SearchModal';
 import MapViewDirections from 'react-native-maps-directions';
-
-
+import Geolocation from '@react-native-community/geolocation';
 
 const config = ConfigData();
-const url = `https://evat.vt2.app/api/navigation/getchargersnode`
-
+const url = `https://evat.vt2.app/api/navigation/getchargersnode`;
 
 const MapPage = () => {
+  const mapRef = useRef<MapView>(null); // ✅ map reference for centering
   const [region, setRegion] = useState<Region | null>(null);
   const [error, setError] = useState<boolean | null>(null);
   const [chargers, setChargers] = useState<Object | null>(null);
@@ -42,147 +42,130 @@ const MapPage = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Text style={{ color: 'white', marginRight: 15 }} onPress={() => Alert.alert("User Information",`User: ${user?.fullName}\nEmail: ${user?.email}\nRole: ${user?.role}`)}>
+        <Text style={{ color: 'white', marginRight: 15 }} onPress={() =>
+          Alert.alert("User Information", `User: ${user?.fullName}\nEmail: ${user?.email}\nRole: ${user?.role}`)
+        }>
           {user.fullName}
         </Text>
       ),
     });
   }, [navigation]);
 
-
-  const searchFunction = () => {
-    console.log('Search Function Called'); 
-    setSearchWindow(true);
-  }
-
-  const settingsFunction = () => {
-    console.log('Settings Function Called');
-  }
-
-  // Alert.alert(`Welcome ${user?.fullName}`, `Click on any Charger icon to get see its details.`, [{text: 'Ok',}]);
-
-  const requestLocationPermission = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        await locateUser();
-      }
-    } else {
-      //handle position granted
-    }
-  };
+  const searchFunction = () => setSearchWindow(true);
+  const settingsFunction = () => console.log('Settings Function Called');
 
   const getChargers = async (location: {}, distance: number) => {
     try {
       const response = await fetch(`${url}?lat=${location.latitude}&lon=${location.longitude}&distance=10000`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
-
       const data = await response.json();
-      if (response.ok) {
-        // Handle successful get of chargers
-        setChargers(data.data);
-        //populate map with icons
-
-      } else {
-        // Handle get chargers error
-        console.log("Response not ok")
-      }
+      if (response.ok) setChargers(data.data);
+      else console.log("Response not ok");
     } catch (error) {
-      console.log("Error with get chargers")
+      console.log("Error with get chargers");
     }
   };
-
-
-  const locateUser = async () => {
-    try {
-      const location = await GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 60000,
-      });
-
-      const { latitude, longitude } = location;
-
-      setRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-
-    } catch (error) {
-      console.log("Error locating user:", error);
-    }
-  };
-
-
-
-  useEffect(() => { requestLocationPermission() }, []);
 
   useEffect(() => {
-    if (region) {
-      console.log(region)
-      getChargers(region, 30000);
-    }
+    const startWatchingLocation = async () => {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          setError(true);
+          return;
+        }
+      }
+
+      const watchId = Geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const newRegion = {
+            latitude,
+            longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          };
+          setRegion(newRegion);
+
+          // ✅ Auto-center map
+          if (mapRef.current) {
+            mapRef.current.animateToRegion(newRegion, 1000);
+          }
+        },
+        (err) => {
+          console.log("Location error:", err);
+          setError(true);
+        },
+        {
+          enableHighAccuracy: true,
+          distanceFilter: 10,
+          interval: 5000,
+          fastestInterval: 2000,
+        }
+      );
+
+      return () => {
+        Geolocation.clearWatch(watchId);
+      };
+    };
+
+    startWatchingLocation();
+  }, []);
+
+  useEffect(() => {
+    if (region) getChargers(region, 30000);
   }, [region]);
 
   if (!region) {
-    console.log("Region Null")
+    console.log("Region Null");
     return null;
   }
 
-
   return (
-      <View style={styles.container}>
-        <SearchModal visible={searchWindow} onClose={() => setSearchWindow(false)} />
-        <MapView
-          style={styles.map}
-          region={region}
-          showsUserLocation={true}
-        >
-          {region && chargers && chargers.map((charger, idx) => (
-            <ChargerMarker
-              key={`${idx}`}
-              charger={charger}
-              onPress={(location) => {
-                setSelectedCharger(location);  // Update selected charger location
-              }}
-            />
-          ))}
+    <View style={styles.container}>
+      <SearchModal visible={searchWindow} onClose={() => setSearchWindow(false)} />
+      <MapView
+        ref={mapRef} // ✅ attach ref to MapView
+        style={styles.map}
+        region={region}
+        showsUserLocation={true}
+      >
+        {chargers && chargers.map((charger, idx) => (
+          <ChargerMarker
+            key={`${idx}`}
+            charger={charger}
+            onPress={(location) => setSelectedCharger(location)}
+          />
+        ))}
 
-          {selectedCharger && (
-            <MapViewDirections
-              origin={{ latitude: region.latitude, longitude: region.longitude }}
-              destination={selectedCharger}
-              apikey={"AIzaSyDCzcXBa_XmfVjGsapneInLFHruLdEit28"}  // Make sure to replace with your actual API key
-              strokeWidth={6}
-              strokeColor="blue"
-              onReady={result => {
-                console.log(`Route found. Distance: ${result.distance} km, Duration: ${result.duration} min`);
-              }}
-              onError={errorMessage => {
-                console.error("Directions error:", errorMessage);
-              }}
-            />
-          )}
-        </MapView>
+        {selectedCharger && (
+          <MapViewDirections
+            origin={{ latitude: region.latitude, longitude: region.longitude }}
+            destination={selectedCharger}
+            apikey={"AIzaSyDCzcXBa_XmfVjGsapneInLFHruLdEit28"}
+            strokeWidth={6}
+            strokeColor="blue"
+            onReady={result => {
+              console.log(`Route found. Distance: ${result.distance} km, Duration: ${result.duration} min`);
+            }}
+            onError={errorMessage => {
+              console.error("Directions error:", errorMessage);
+            }}
+          />
+        )}
+      </MapView>
 
-        <NavBar searchFunction={searchFunction} settingsFunction={settingsFunction} />
-      </View>
-    );
-
+      <NavBar searchFunction={searchFunction} settingsFunction={settingsFunction} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // ...StyleSheet.absoluteFillObject,
-    flex: 1,
-  },
+  container: { flex: 1 },
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
@@ -199,12 +182,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  // chargerButton: {
-  //   width: 100,
-  //   height: 50,
-  //   borderRadius: 5,
-  //   backgroundColor: 'red',
-  // },
 });
 
 export default MapPage;
