@@ -6,7 +6,7 @@ import React, {
   useRef, // ✅ added
 } from 'react';
 import { UserContext } from '../context/user.context';
-import { useNavigation } from '@react-navigation/native';
+import {  useNavigation  } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -26,7 +26,15 @@ import MapViewDirections from 'react-native-maps-directions';
 import Geolocation from '@react-native-community/geolocation';
 
 const config = ConfigData();
-const url = `https://evat.vt2.app/api/navigation/getchargersnode`;
+
+
+//set the mode of the application to either dev or prod
+const mode = config.mode;
+//set the backend URL based on the mode of the application
+let url2 = config.backendURL(mode) + `/api/altChargers/nearby`
+ 
+
+console.log("Mode: ", mode, ", URL: ", url2);
 
 const MapPage = () => {
   const mapRef = useRef<MapView>(null); // ✅ map reference for centering
@@ -42,9 +50,7 @@ const MapPage = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Text style={{ color: 'white', marginRight: 15 }} onPress={() =>
-          Alert.alert("User Information", `User: ${user?.fullName}\nEmail: ${user?.email}\nRole: ${user?.role}`)
-        }>
+        <Text style={{ color: 'white', marginRight: 15 }} onPress={() => Alert.alert("User Information", `User: ${user?.fullName}\nEmail: ${user?.email}\nRole: ${user?.role}`)}>
           {user.fullName}
         </Text>
       ),
@@ -54,70 +60,63 @@ const MapPage = () => {
   const searchFunction = () => setSearchWindow(true);
   const settingsFunction = () => console.log('Settings Function Called');
 
-  const getChargers = async (location: {}, distance: number) => {
+ 
+  //Sends request to backend to get chargers - function to work with the new backend endpoint
+  const searchChargers = async (data) => {
     try {
-      const response = await fetch(`${url}?lat=${location.latitude}&lon=${location.longitude}&distance=10000`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
+      setSearchWindow(false);
+      const response = await fetch(url2, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token.accessToken}`
+        }
       });
-      const data = await response.json();
-      if (response.ok) setChargers(data.data);
-      else console.log("Response not ok");
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Chargers Found", `Found ${result.count} chargers`, [{ text: 'Ok', }]);
+        setChargers(result.chargers);
+        setSearchWindow(false);
+      } else {
+        console.log(response)
+        console.log("Response not ok");
+      }
     } catch (error) {
-      console.log("Error with get chargers");
+      console.log("Error with search chargers", error);
+    }
+  }
+
+  const locateUser = async () => {
+    try {
+      const location = await GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 60000,
+      });
+
+      const { latitude, longitude } = location;
+
+      setRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+    } catch (error) {
+      console.log("Error locating user:", error);
     }
   };
 
   useEffect(() => {
-    const startWatchingLocation = async () => {
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          setError(true);
-          return;
-        }
-      }
-
-      const watchId = Geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const newRegion = {
-            latitude,
-            longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          };
-          setRegion(newRegion);
-
-          // ✅ Auto-center map
-          if (mapRef.current) {
-            mapRef.current.animateToRegion(newRegion, 1000);
-          }
-        },
-        (err) => {
-          console.log("Location error:", err);
-          setError(true);
-        },
-        {
-          enableHighAccuracy: true,
-          distanceFilter: 10,
-          interval: 5000,
-          fastestInterval: 2000,
-        }
-      );
-
-      return () => {
-        Geolocation.clearWatch(watchId);
-      };
-    };
-
-    startWatchingLocation();
+    requestLocationPermission();
   }, []);
 
   useEffect(() => {
-    if (region) getChargers(region, 30000);
+    if (region) {
+      searchChargers({...region, radius: 5});
+    }
   }, [region]);
 
   if (!region) {
@@ -127,7 +126,7 @@ const MapPage = () => {
 
   return (
     <View style={styles.container}>
-      <SearchModal visible={searchWindow} onClose={() => setSearchWindow(false)} />
+      <SearchModal dataIn={region} onResults={searchChargers} visible={searchWindow} onClose={() => setSearchWindow(false)} />
       <MapView
         ref={mapRef} // ✅ attach ref to MapView
         style={styles.map}
@@ -174,13 +173,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     resizeMode: 'contain',
-  },
-  navbar: {
-    width: Dimensions.get('window').width,
-    height: 40,
-    backgroundColor: 'red',
-    position: 'absolute',
-    bottom: 0,
   },
 });
 
