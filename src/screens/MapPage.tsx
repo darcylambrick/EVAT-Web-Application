@@ -6,7 +6,7 @@ import React, {
   useRef, // ✅ added
 } from 'react';
 import { UserContext } from '../context/user.context';
-import {  useNavigation  } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -15,6 +15,7 @@ import {
   Platform,
   Alert,
   Dimensions,
+  Image,
 } from 'react-native';
 
 import MapView, { Region } from 'react-native-maps';
@@ -23,6 +24,7 @@ import { ConfigData } from '../data/config';
 import NavBar from '../components/Navbar';
 import SearchModal from '../components/SearchModal';
 import MapViewDirections from 'react-native-maps-directions';
+import GetLocation from 'react-native-get-location';
 import Geolocation from '@react-native-community/geolocation';
 
 const config = ConfigData();
@@ -32,7 +34,7 @@ const config = ConfigData();
 const mode = config.mode;
 //set the backend URL based on the mode of the application
 let url2 = config.backendURL(mode) + `/api/altChargers/nearby`
- 
+
 
 console.log("Mode: ", mode, ", URL: ", url2);
 
@@ -45,7 +47,7 @@ const MapPage = () => {
   const { user, setUser } = useContext(UserContext);
   const [selectedCharger, setSelectedCharger] = useState<{ latitude: number; longitude: number } | null>(null);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()<any>;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -60,7 +62,56 @@ const MapPage = () => {
   const searchFunction = () => setSearchWindow(true);
   const settingsFunction = () => console.log('Settings Function Called');
 
- 
+
+  useEffect(() => {
+    const startWatchingLocation = async () => {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          setError(true);
+          return;
+        }
+      }
+
+      const watchId = Geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const newRegion = {
+            latitude,
+            longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          };
+          setRegion(newRegion);
+
+          // ✅ Auto-center map
+          if (mapRef.current) {
+            mapRef.current.animateToRegion(newRegion, 1000);
+          }
+        },
+        (err) => {
+          console.log("Location error:", err);
+          setError(true);
+        },
+        {
+          enableHighAccuracy: true,
+          distanceFilter: 10,
+          interval: 5000,
+          fastestInterval: 2000,
+        }
+      );
+
+      return () => {
+        Geolocation.clearWatch(watchId);
+      };
+    };
+
+    startWatchingLocation();
+  }, []);
+
+
   //Sends request to backend to get chargers - function to work with the new backend endpoint
   const searchChargers = async (data) => {
     try {
@@ -77,13 +128,10 @@ const MapPage = () => {
       const result = await response.json();
 
       if (response.ok) {
-        Alert.alert("Chargers Found", `Found ${result.count} chargers`, [{ text: 'Ok', }]);
+        Alert.alert("🔋 Charging Stations", `Found ${result.count} chargers`, [{ text: 'Ok', }]);
         setChargers(result.chargers);
         setSearchWindow(false);
-      } else {
-        console.log(response)
-        console.log("Response not ok");
-      }
+      } else { console.log("Response not ok") }
     } catch (error) {
       console.log("Error with search chargers", error);
     }
@@ -109,19 +157,16 @@ const MapPage = () => {
     }
   };
 
-  useEffect(() => {
-    requestLocationPermission();
-  }, []);
-
-  useEffect(() => {
-    if (region) {
-      searchChargers({...region, radius: 5});
-    }
-  }, [region]);
 
   if (!region) {
     console.log("Region Null");
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Image source={require('../data/loading-img.png')} style={styles.loadingImage} />
+        <Text style={styles.loadingText}>Waiting for user location</Text>
+        <Text style={styles.loadingText}>Loading map...</Text>
+      </View>
+    )
   }
 
   return (
@@ -137,7 +182,7 @@ const MapPage = () => {
           <ChargerMarker
             key={`${idx}`}
             charger={charger}
-            onPress={(location) => setSelectedCharger(location)}
+            goToPressed={(location) => setSelectedCharger(location)}
           />
         ))}
 
@@ -153,6 +198,7 @@ const MapPage = () => {
             }}
             onError={errorMessage => {
               console.error("Directions error:", errorMessage);
+              Alert.alert("Error", "Unable to find directions. Please try again later.");
             }}
           />
         )}
@@ -174,6 +220,21 @@ const styles = StyleSheet.create({
     height: 40,
     resizeMode: 'contain',
   },
+  loadingImage: {
+    width: 300,
+    height: 300,
+    resizeMode: 'contain',
+    marginBottom: 20,
+    // position: 'absolute',
+    // top: Dimensions.get('window').height / 2 - 150,
+  },
+  loadingText: {
+    backgroundColor: '#ffffff55',
+    fontSize: 25,
+  }
+
+
+
 });
 
 export default MapPage;
