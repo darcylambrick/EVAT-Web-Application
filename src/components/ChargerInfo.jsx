@@ -1,3 +1,4 @@
+import { set } from 'mongoose';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, Alert } from 'react-native'
 import { Marker } from 'react-native-maps';
@@ -7,7 +8,7 @@ import { Marker } from 'react-native-maps';
 
 
 function ChargerMarker(props) {
-  const { charger } = props;
+  const { charger, goToPressed } = props;
 
   const title = charger.operator == "Unknown" ? "Charger" :  charger.operator;
   const location = { latitude: charger.latitude, longitude: charger.longitude }
@@ -24,19 +25,22 @@ function ChargerMarker(props) {
   }
 
   const createChargerAlert = () => {
-    const info = `Charger Name: ${charger.name}\nCharging Points: ${charger.charging_points}\nCharger Type: ${charger.type}\nCharger Status: ${charger.status}\nRating: ${createRatingStars()} ${charger.rating}\n` 
+    const info = `Charger Name: ${charger.name}\nCharging Points: ${charger.charging_points}\nCharger Type: ${charger.type}\nCharger Status: ${charger.status}\nRating: ${createRatingStars()} ${charger.rating}\nLocation: ${charger.latitude}, ${charger.longitude}\n` 
 
     Alert.alert(title, info, [
       {
-        text: 'Got To Charger',
+        text: 'Go To Charger',
         onPress: () => {
           // Update the selected charger location in the parent MapPage component
           const chargerLocation = {
-            latitude: charger.geometry.location.lat,
-            longitude: charger.geometry.location.lng
+            latitude: charger.latitude,
+            longitude: charger.longitude
           };
-          props.onPress(chargerLocation); // Pass the location to the parent MapPage component
+          goToPressed(chargerLocation); // Pass the location to the parent MapPage component
           console.log('Route will be calculated to this charger.');
+          Alert.alert("Route will be calculated to this charger.", "Please wait...", [
+            { text: 'OK', onPress: () => console.log('OK Pressed') }
+          ]);
         }
       },
       {

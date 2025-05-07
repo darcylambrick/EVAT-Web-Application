@@ -6,7 +6,7 @@ export const ConfigData = ()=>{
         PROD: "prod",
     }
     
-    const mode = MODE.DEV;
+    const mode = MODE.PROD;
     
     const backend = {
         ipAddress: "https://evat.ddns.net",

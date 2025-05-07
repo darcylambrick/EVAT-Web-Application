@@ -29,57 +29,31 @@ type SearchModalProps = {
 
 const SearchModal: React.FC<SearchModalProps> = ({ visible, onClose, onResults, dataIn }) => {
   const [name, setName] = React.useState(dataIn?.name);
-  const [latitude, setLatitude] = React.useState(dataIn?.latitude);
-  const [longitude, setLongitude] = React.useState(dataIn?.longitude);
   const [radius, setRadius] = React.useState(dataIn?.radius);
   const [connector, setConnector] = React.useState(dataIn?.connector);
   const [current, setCurrent] = React.useState(dataIn?.current);
   const [operator, setOperator] = React.useState(dataIn?.operator);
-  // setLatitude(position?.latitude);
-  // setLongitude(position?.longitude);
+
+  const [latitude, setLatitude] = React.useState('');
+  const [longitude, setLongitude] = React.useState('');
 
   useEffect(() => {
-    
-  })
+    // Update the latitude and longitude state variables when the charger prop changes
+    if (visible && dataIn) {
+      setLatitude(dataIn.latitude.toString() || '');
+      setLongitude(dataIn.longitude.toString() || '');
+    }
+  }, [visible, dataIn]);
 
   const handleSearch = async () => {
-    //   try {
-    //     const params = new URLSearchParams();
-    //     if (name) params.append('name', name);
-    //     if (longitude) params.append('lon', longitude);
-    //     if (latitude) params.append('lat', longitude);
-    //     if (distance) params.append('distance', distance);
-    //     if (connector) params.append('connectorType', connector);
-    //     if (current) params.append('current', current);
-    //     if (operator) params.append('operator', operator);
-
-    //     const response = await fetch(`${apiUrl}?${params.toString()}`, {
-    //       method: 'GET',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //     }});
-
-    //     const data = await response.json();
-    //     if (response.ok) {
-    //       onResults(data.data);
-    //     } else {
-    //       console.error('Search API error:', data);
-    //       onResults([]);
-    //     }
-    //   } catch (err) {
-    //     console.error('Search request failed:', err);
-    //     onResults([]);
-    //   } finally {
-    //     onClose();
-    //   }
-
     onResults({
       latitude,
       longitude,
       radius,
       connector,
       current,
-      operator });
+      operator
+    });
   };
 
   return (
@@ -88,7 +62,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ visible, onClose, onResults, 
         <Text key={1} style={styles.title}>Search Chargers</Text>
         <Text key={20} style={styles.inputTitle}>Name:</Text>
         <TextInput key={2} keyboardType="numeric" style={styles.input} placeholder="Name" value={name} onChangeText={setName} />
-        
+
         <Text key={21} style={styles.inputTitle}>Latitude:</Text>
         <TextInput key={3} keyboardType="numeric" style={styles.input} placeholder="Latitude" value={latitude} onChangeText={setLatitude} />
         <Text key={22} style={styles.inputTitle}>Longitude:</Text>
