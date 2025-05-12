@@ -38,7 +38,7 @@ function ChargerMarker(props) {
           };
           goToPressed(chargerLocation); // Pass the location to the parent MapPage component
           console.log('Route will be calculated to this charger.');
-          Alert.alert("Route will be calculated to this charger.", "Please wait...", [
+          Alert.alert("🚩 Route will be calculated to this charger.", "Please wait...", [
             { text: 'OK', onPress: () => console.log('OK Pressed') }
           ]);
         }

@@ -28,7 +28,8 @@ import MapViewDirections from 'react-native-maps-directions';
 import GetLocation from 'react-native-get-location';
 import Geolocation from '@react-native-community/geolocation';
 import { map } from '../../server/data/vehicles';
-import { get } from 'mongoose';
+import { get, set } from 'mongoose';
+import NavigationInfo from '../components/NavigationInfo';
 
 const config = ConfigData();
 
@@ -51,6 +52,8 @@ const MapPage = () => {
   const [searchWindow, setSearchWindow] = useState<Boolean | false>(false);
   const { user, setUser } = useContext(UserContext);
   const [selectedCharger, setSelectedCharger] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [travelTime, setTravelTime] = useState<number | null>(null);
+  const [travelDistance, setTravelDistance] = useState<number | null>(null);
 
   const navigation = useNavigation()<any>;
 
@@ -87,6 +90,15 @@ const MapPage = () => {
     }
   }
 
+  const cancelNavigation = () => {
+    Alert.alert("❌ Navigation", "Are you sure you want to stop navigation?", [
+      { text: "No", style: "cancel" },
+      {
+        text: "Stop", onPress: () => {
+          setSelectedCharger(null);
+        }
+      }])
+  }
 
   // Request location permission
   const getUserPermissions = async () => {
@@ -124,8 +136,8 @@ const MapPage = () => {
           };
           setRegion(newRegion);
 
-          // ✅ Auto-center map
-          if (mapRef.current) {
+          // ✅ Auto-center map if user is navigating
+          if (mapRef.current && selectedCharger) {
             mapRef.current.animateToRegion(newRegion, 1000);
           }
         },
@@ -181,12 +193,12 @@ const MapPage = () => {
       {/* Loading screen */}
       {(!region || error) && (
         <View style={styles.loadingDiv}>
-        <View style={styles.loadingInnerDiv}>
-          <Image source={require('../data/loading-img.png')} style={styles.loadingImage} />
-          <Text style={styles.loadingText}>Waiting for user location</Text>
-          <Text style={styles.loadingText}>Loading map...</Text>
+          <View style={styles.loadingInnerDiv}>
+            <Image source={require('../data/loading-img.png')} style={styles.loadingImage} />
+            <Text style={styles.loadingText}>Waiting for user location</Text>
+            <Text style={styles.loadingText}>Loading map...</Text>
+          </View>
         </View>
-      </View>
       )}
 
       <MapView
@@ -212,6 +224,8 @@ const MapPage = () => {
             strokeColor="blue"
             onReady={result => {
               console.log(`Route found. Distance: ${result.distance} km, Duration: ${result.duration} min`);
+              setTravelDistance(result.distance.toFixed(1));
+              setTravelTime(result.duration.toFixed(1));
             }}
             onError={errorMessage => {
               console.error("Directions error:", errorMessage);
@@ -219,7 +233,22 @@ const MapPage = () => {
             }}
           />
         )}
+        {/* <MapView.Marker
+          coordinate={selectedCharger}
+          title="Selected Charger"
+          description="This is the selected charger"
+        >
+          <Image source={require('../data/charger.png')} style={styles.marker} />
+        </MapView.Marker> */}
+
+
       </MapView>
+
+      {selectedCharger && (
+        <NavigationInfo travelDistance={travelDistance} travelTime={travelTime} cancelFunction={cancelNavigation} />
+        // <NavigationInfo travelDistance={"10"} travelTime={"10"} />
+      )}
+
 
       <NavBar searchFunction={searchFunction} settingsFunction={settingsFunction} />
     </View>
