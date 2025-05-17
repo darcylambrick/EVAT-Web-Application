@@ -37,7 +37,7 @@ const config = ConfigData();
 //set the mode of the application to either dev or prod
 const mode = config.mode;
 //set the backend URL based on the mode of the application
-let url2 = config.backendURL(mode) + `/api/altChargers/nearby`
+let url2 = config.backendURL(mode) + `/api/chargers`
 
 //for testing purposes
 console.log("Mode: ", mode, ", URL: ", url2);
@@ -130,6 +130,7 @@ const MapPage = () => {
           const { latitude, longitude } = position.coords;
           const newRegion = {
             latitude,
+            
             longitude,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
@@ -167,20 +168,30 @@ const MapPage = () => {
   const searchChargers = async (data) => {
     try {
       setSearchWindow(false);
-      const response = await fetch(url2, {
-        method: 'POST',
-        body: JSON.stringify(data),
+      //Alternative endpoint for chargers
+      // const response = await fetch(url2, {
+      //   method: 'POST',
+      //   body: JSON.stringify(data),
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${user.token.accessToken}`
+      //   }
+      // });
+      const params = new URLSearchParams(data);
+      const urlParams = params.toString();
+      const response = await fetch(`${url2}?${urlParams}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token.accessToken}`
+          'Authorization': `Bearer ${user.token.accessToken}` 
         }
       });
       const result = await response.json();
       if (response.ok) {
         Alert.alert("🔋 Charging Stations", `Found ${result.count} chargers`, [{ text: 'Ok', }]);
-        setChargers(result.chargers);
+        setChargers(result.data);
         setSearchWindow(false);
-      } else { console.log("Response not ok") }
+      } else { console.log("Response not ok: ", response) }
     } catch (error) {
       console.log("Error with search chargers", error);
     }
@@ -188,7 +199,7 @@ const MapPage = () => {
 
   return (
     <View style={styles.container}>
-      <SearchModal dataIn={region} onResults={searchChargers} visible={searchWindow} onClose={() => setSearchWindow(false)} />
+      <SearchModal dataIn={{ lat: region?.latitude, lon: region?.longitude }} onResults={searchChargers} visible={searchWindow} onClose={() => setSearchWindow(false)} />
 
       {/* Loading screen */}
       {(!region || error) && (

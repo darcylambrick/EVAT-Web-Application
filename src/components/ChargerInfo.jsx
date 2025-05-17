@@ -12,7 +12,7 @@ function ChargerMarker(props) {
 
   const title = charger.operator == "Unknown" ? "Charger" :  charger.operator;
   const location = { latitude: charger.latitude, longitude: charger.longitude }
-  const description = `Chargers: ${charger.charging_points}`
+  const description = `Chargers: ${charger.charging_points}, ${displayConnectorType()}`
   const rating = charger.rating ? charger.rating : "No rating"
 
   const createRatingStars = () => {
@@ -24,8 +24,24 @@ function ChargerMarker(props) {
     return stars;
   }
 
+  function displayConnectorType () {
+    if (charger.connection_type == "Unknown") return null;
+    return "Connector Type: " + charger.connection_type;
+  }
+
+  function displayChargerInfo () {
+    let info = "";
+    info += charger.operator == "Unknown" ? "" : "Charger Name: " + charger.operator + "\n";
+    info += "Charging Points: " + charger.charging_points + "\n";
+    info += charger.connection_type == "Unknown" ? "" : `Connector Type: ${charger.connection_type}\n`;
+    info += "Charger Status: "+ (charger.is_operational ? "Operational" : charger.is_operational == "Unkown" ? "??" : "Not Operational") + "\n";
+    info += charger.cost == "Unknown" ? "" : "Cost: " + charger.cost + "\n";
+    return info
+  }
+
   const createChargerAlert = () => {
-    const info = `Charger Name: ${charger.name}\nCharging Points: ${charger.charging_points}\nCharger Type: ${charger.type}\nCharger Status: ${charger.status}\nRating: ${createRatingStars()} ${charger.rating}\nLocation: ${charger.latitude}, ${charger.longitude}\n` 
+    // const info = `Charging Points: ${charger.charging_points}\nCharger Type: ${charger.connection_type}\nCharger Status: ${charger.status}\nRating: ${createRatingStars()} ${charger.rating}\nLocation: ${charger.latitude}, ${charger.longitude}\n` 
+    const info = displayChargerInfo()
 
     Alert.alert(title, info, [
       {
@@ -58,7 +74,8 @@ function ChargerMarker(props) {
       // onPress={() => setChargerInfo(chargerOptions)}
       coordinate={location}
       title={title}
-      description={description+" (" + createRatingStars()+")"}
+      // description={description+" (" + createRatingStars()+")"}
+      description={description}
       onCalloutPress={() => createChargerAlert()}>
       <Image source={require('../data/ev_charger_symbol.webp')} style={styles.marker} />
     </Marker>
