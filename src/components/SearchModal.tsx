@@ -18,8 +18,8 @@ type SearchModalProps = {
   onResults: (results: any[]) => void;
   dataIn: {
     name?: string;
-    latitude?: number;
-    longitude?: number;
+    lat?: number;
+    lon?: number;
     radius?: number;
     connector?: string;
     current?: string;
@@ -34,26 +34,24 @@ const SearchModal: React.FC<SearchModalProps> = ({ visible, onClose, onResults, 
   const [current, setCurrent] = React.useState(dataIn?.current);
   const [operator, setOperator] = React.useState(dataIn?.operator);
 
-  const [latitude, setLatitude] = React.useState('');
-  const [longitude, setLongitude] = React.useState('');
+  const [lat, setLat] = React.useState('');
+  const [lon, setLon] = React.useState('');
 
   useEffect(() => {
-    // Update the latitude and longitude state variables when the charger prop changes
+    // Update the lat and lon state variables when the charger prop changes
     if (visible && dataIn) {
-      setLatitude(dataIn.latitude.toString() || '');
-      setLongitude(dataIn.longitude.toString() || '');
+      setLat(dataIn.lat.toString() || '');
+      setLon(dataIn.lon.toString() || '');
     }
   }, [visible, dataIn]);
 
   const handleSearch = async () => {
-    onResults({
-      latitude,
-      longitude,
-      radius,
-      connector,
-      current,
-      operator
-    });
+    console.log(connector, current, operator);
+    const results = { lat, lon, radius }
+    if (connector != undefined) { results.connector = connector };
+    if (current != undefined) { results.current = current };
+    if (operator != undefined) { results.operator = operator };
+    onResults(results);
   };
 
   return (
@@ -64,9 +62,9 @@ const SearchModal: React.FC<SearchModalProps> = ({ visible, onClose, onResults, 
         <TextInput key={2} keyboardType="numeric" style={styles.input} placeholder="Name" value={name} onChangeText={setName} />
 
         <Text key={21} style={styles.inputTitle}>Latitude:</Text>
-        <TextInput key={3} keyboardType="numeric" style={styles.input} placeholder="Latitude" value={latitude} onChangeText={setLatitude} />
+        <TextInput key={3} keyboardType="numeric" style={styles.input} placeholder="Latitude" value={lat} onChangeText={setLat} />
         <Text key={22} style={styles.inputTitle}>Longitude:</Text>
-        <TextInput key={19} keyboardType="numeric" style={styles.input} placeholder="Longitude" value={longitude} onChangeText={setLongitude} />
+        <TextInput key={19} keyboardType="numeric" style={styles.input} placeholder="Longitude" value={lon} onChangeText={setLon} />
         <Text key={23} style={styles.inputTitle}>Radius:</Text>
         <TextInput key={4} keyboardType="numeric" style={styles.input} placeholder="Radius (km)" value={radius} onChangeText={setRadius} keyboardType="numeric" />
 

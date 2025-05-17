@@ -93,7 +93,11 @@ const SignupPage = ({ navigation }) => {
           placeholder="Email"
           placeholderTextColor="#777"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text) => setEmail(text.toLowerCase())}
+          // onChangeText={setEmail}
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="email-address"
         />
         {email !== '' && (
           <TouchableOpacity onPress={clearEmail} style={styles.clearButton}>
