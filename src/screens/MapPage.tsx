@@ -45,6 +45,7 @@ console.log("Mode: ", mode, ", URL: ", url2);
 const MapPage = () => {
   const mapRef = useRef<MapView>(null); // ✅ map reference for centering
   let watchId = useRef<number | null>(null); // ✅ watchId reference
+  const selectedChargerRef = useRef<{ latitude: number; longitude: number } | null>(null);
   const [region, setRegion] = useState<Region | null>(null);
   // const [region, setRegion] = useState<null>(null);
   const [error, setError] = useState<boolean | null>(null);
@@ -118,6 +119,7 @@ const MapPage = () => {
 
 
   useEffect(() => {
+    selectedChargerRef.current = selectedCharger;
     const startLocation = async () => {
       await getUserPermissions();
       if (error) {
@@ -127,10 +129,10 @@ const MapPage = () => {
       mapRef.current.animateToRegion(region, 1000);
       watchId.current = Geolocation.watchPosition(
         (position) => {
+          // console.log("Location updated, selectedCharger state:", selectedCharger);
           const { latitude, longitude } = position.coords;
           const newRegion = {
             latitude,
-            
             longitude,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
@@ -138,7 +140,7 @@ const MapPage = () => {
           setRegion(newRegion);
 
           // ✅ Auto-center map if user is navigating
-          if (mapRef.current && selectedCharger) {
+          if (mapRef.current && selectedChargerRef.current) {
             mapRef.current.animateToRegion(newRegion, 1000);
           }
         },
@@ -161,7 +163,9 @@ const MapPage = () => {
       watchId.current = null;
     };
 
-  }, []);
+  }, [selectedCharger]);
+
+
 
 
   //Sends request to backend to get chargers - function to work with the new backend endpoint
@@ -191,6 +195,21 @@ const MapPage = () => {
         Alert.alert("🔋 Charging Stations", `Found ${result.count} chargers`, [{ text: 'Ok', }]);
         setChargers(result.data);
         setSearchWindow(false);
+
+        const coords = result.data.map((charger) => ({
+          latitude: charger.latitude,
+          longitude: charger.longitude,
+        }));
+
+        coords.push({
+          latitude: region.latitude,
+          longitude: region.longitude,
+        });
+
+        mapRef.current.fitToCoordinates(coords, {
+          edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+          animated: true,
+        });
       } else { console.log("Response not ok: ", response) }
     } catch (error) {
       console.log("Error with search chargers", error);
@@ -215,7 +234,8 @@ const MapPage = () => {
       <MapView
         ref={mapRef} // ✅ attach ref to MapView
         style={styles.map}
-        region={region}
+        // region={region} causes map to auto track user location
+        initialRegion={region}
         showsUserLocation={true}
       >
         {chargers && chargers.map((charger, idx) => (

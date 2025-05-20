@@ -34,7 +34,8 @@ function ChargerMarker(props) {
     info += charger.operator == "Unknown" ? "" : "Charger Name: " + charger.operator + "\n";
     info += "Charging Points: " + charger.charging_points + "\n";
     info += charger.connection_type == "Unknown" ? "" : `Connector Type: ${charger.connection_type}\n`;
-    info += "Charger Status: "+ (charger.is_operational ? "Operational" : charger.is_operational == "Unkown" ? "??" : "Not Operational") + "\n";
+    info += charger.current_type == "Unknown" ? "" : `Current Type: ${charger.current_type}\n`;
+    info += "Charger Status: "+ (charger.is_operational ? "Operational" : charger.is_operational == "Unkown" ? "Not Known" : "Not Operational") + "\n";
     info += charger.cost == "Unknown" ? "" : "Cost: " + charger.cost + "\n";
     return info
   }

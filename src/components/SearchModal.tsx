@@ -69,15 +69,27 @@ const SearchModal: React.FC<SearchModalProps> = ({ visible, onClose, onResults, 
         <TextInput key={4} keyboardType="numeric" style={styles.input} placeholder="Radius (km)" value={radius} onChangeText={setRadius} keyboardType="numeric" />
 
         <Picker key={5} selectedValue={connector} onValueChange={setConnector} style={pickerSelectStyles.inputAndroid}>
-          <Picker.Item key={6} label="Select Connector" value="" />
-          <Picker.Item key={7} label="Type 1" value="type1" />
-          <Picker.Item key={8} label="Type 2" value="type2" />
+          <Picker.Item key={36} label="Select Connector" value="" />
+          <Picker.Item key={37} label="CCS (Type 2)" value="CCS (Type 2)" />
+          <Picker.Item key={38} label="CHAdeMO" value="CHAdeMO" />
+          <Picker.Item key={39} label="IEC 60309 5-pin" value="IEC 60309 5-pin" />
+          <Picker.Item key={30} label="NEMA 5-20R" value="NEMA 5-20R" />
+          <Picker.Item key={31} label="Tesla (Model S/X)" value="Tesla (Model S/X)" />
+          <Picker.Item key={32} label="Three Phase 5-Pin (AS/NZ 3123)" value="Three Phase 5-Pin (AS/NZ 3123)" />
+          <Picker.Item key={33} label="Type 1 (J1772)" value="Type 1 (J1772)" />
+          <Picker.Item key={34} label="Type 1 (J1772), Type 2 (Socket Only), CHAdeMO" value="Type 1 (J1772), Type 2 (Socket Only), CHAdeMO" />
+          <Picker.Item key={35} label="Type 2 (Socket Only)" value="Type 2 (Socket Only)" />
+          <Picker.Item key={46} label="Type 2 (Socket Only), CHAdeMO" value="Type 2 (Socket Only), CHAdeMO" />
+          <Picker.Item key={47} label="Type 2 (Tethered Connector)" value="Type 2 (Tethered Connector) " />
+          <Picker.Item key={48} label="Type I (AS 3112)" value="Type I (AS 3112)" />
+          <Picker.Item key={49} label="Unknown" value="Unknown" />
         </Picker>
 
         <Picker key={9} selectedValue={current} onValueChange={setCurrent} style={pickerSelectStyles.inputAndroid}>
           <Picker.Item key={10} label="Select Current" value="" />
-          <Picker.Item key={11} label="AC" value="ac" />
-          <Picker.Item key={12} label="DC" value="dc" />
+          <Picker.Item key={11} label="AC Single Phase" value="AC (Single-Phase)" />
+          <Picker.Item key={12} label="AC Three Phase" value="AC (Three-Phase)" />
+          <Picker.Item key={50} label="DC" value="DC" />
         </Picker>
         <Text key={24} style={styles.inputTitle}>Operator:</Text>
         <TextInput key={13} style={styles.input} placeholder="Operator" value={operator} onChangeText={setOperator} />
