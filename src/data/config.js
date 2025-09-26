@@ -9,8 +9,8 @@ export const ConfigData = ()=>{
     const mode = MODE.PROD;
     
     const backend = {
-        ipAddress: "https://evat.ddns.net",
-        port: 443,
+        ipAddress: "http://10.0.2.2",
+        port: 8080,
         devIPAddress: "http://10.0.2.2",
         devPort: 8080,
     }

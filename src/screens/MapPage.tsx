@@ -70,7 +70,10 @@ const MapPage = () => {
 
 
   const searchFunction = () => setSearchWindow(true);
-  const settingsFunction = () => console.log('Settings Function Called');
+  const settingsFunction = () => {
+    console.log('Settings Function Called');
+    navigation.navigate('SettingsPage');
+  }
 
 
   const getAndSetLocation = async () => {
@@ -190,6 +193,7 @@ const MapPage = () => {
           'Authorization': `Bearer ${user.token.accessToken}` 
         }
       });
+      console.log(`Bearer ${user.token.accessToken}`);
       const result = await response.json();
       if (response.ok) {
         Alert.alert("🔋 Charging Stations", `Found ${result.count} chargers`, [{ text: 'Ok', }]);
